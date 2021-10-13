@@ -37,9 +37,9 @@
 - [ ] 测试
 - [ ] 交付  
 --- 
-[![alt]](https://github.com/jh0612/Demo/blob/main/pikapi.jpeg)  
+[![alt](https://github.com/jh0612/Demo/blob/main/pikapi.jpeg)]  
   頑張れ！！！
-  [![weibo-logo]](http://weibo.com/linpiaochen)
+  ![alt]
 --- 
 [回到顶部](#readme)
 
