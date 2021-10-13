@@ -29,9 +29,14 @@
 [http://commons.apache.org/proper/commons-dbutils/download_dbutils.cgi](http://commons.apache.org/proper/commons-dbutils/download_dbutils.cgi)    
 
 ---  
-- [x] 页面设计- [x] 系统设计- [ ] 详细设计
-- [ ] 编码 - [ ] 测试 - [ ] 交付
-
+### 当下进度
+- [x] 页面设计
+- [ ] 系统设计
+- [ ] 详细设计
+- [ ] 编码 
+- [ ] 测试
+- [ ] 交付  
+--- 
 
 
 
