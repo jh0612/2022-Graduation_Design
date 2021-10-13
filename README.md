@@ -39,7 +39,7 @@
 --- 
 [![alt]](https://github.com/jh0612/Demo/blob/main/pikapi.jpeg)  
   頑張れ！！！
- 
+  [![weibo-logo]](http://weibo.com/linpiaochen)
 --- 
 [回到顶部](#readme)
 
