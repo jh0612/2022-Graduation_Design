@@ -37,7 +37,7 @@
 - [ ] 测试
 - [ ] 交付  
 --- 
-![alt](https://github.com/jh0612/Demo/blob/main/wawai1.jpeg)
+![alt](https://github.com/jh0612/Demo/blob/main/pikapi.jpeg)
 
 
 [回到顶部](#readme)
