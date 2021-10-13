@@ -13,6 +13,7 @@
 ### IDE
 本毕业制作项目使用IDEA与Mysql完成
 ### 后端：
+    * JDK 11
     * Tomcat 9.0.50              
     * mysql-connector-java-8.0.26.jar              
     * druid-1.2.8.jar              
