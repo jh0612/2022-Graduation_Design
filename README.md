@@ -11,7 +11,7 @@
 ---  
 ## 基本所需
 ### IDE
-本毕业制作项目使用IDEA与Mysql完成
+本毕业制作项目使用IntelliJ IDEA与Navicat for MySQL完成
 ### 后端：
     * JDK 11
     * Tomcat 9.0.50              
