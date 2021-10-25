@@ -14,7 +14,7 @@ import java.util.Properties;
  * @create 2021-10-25  18:53
  * petweb
  */
-public abstract class JDBCUtils<T> {
+public abstract class JDBCUtils {
     private static DataSource source;
     static {
         try {

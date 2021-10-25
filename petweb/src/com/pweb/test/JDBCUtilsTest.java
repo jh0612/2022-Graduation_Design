@@ -22,7 +22,7 @@ public class JDBCUtilsTest {
             conn = JDBCUtils.getConnectionDruid();
             System.out.println(conn);//说明已获得连接com.alibaba.druid.proxy.jdbc.ConnectionProxyImpl@32115b28
             String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer where custid = ?";
-            Customer customer = BaseDAO.PreparedStatementSelect(Customer.class, sql, 1);
+            Customer customer = (Customer) BaseDAO.PreparedStatementSelect(Customer.class, sql, 1);
             System.out.println(customer);
         } catch (SQLException e) {
             e.printStackTrace();

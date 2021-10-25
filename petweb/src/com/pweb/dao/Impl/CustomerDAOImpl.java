@@ -16,37 +16,60 @@ import java.util.List;
  */
 public class CustomerDAOImpl extends BaseDAO<Customer> implements CustomerDAO {
     @Override
-    public void insert(Connection conn, Customer customer) {
+    public Customer queryUserByUsernameAndPassword(String custname, String custpassword) {
+        String sql = "select custid,custname,custpassword,custemail from customer where custname = ? and custpassword = ?";
+        return queryForOne(Customer.class,sql,custname,custpassword);
+    }
 
+    @Override
+    public Customer queryUserByUsername(String custname) {
+        String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer where custname = ?";
+        return queryForOne(Customer.class,sql,custname);
+    }
+
+    @Override
+    public void insert(Connection conn, Customer customer) {
+        String sql = "insert into customer(custname,custpassword,custsex,custemail,custaddress,custbirth)values(?,?,?,?,?,?)";
+        update(sql,customer.getcustname(),customer.getcustpassword(),customer.getcustsex(),
+                customer.getcustemail(),customer.getcustaddress(),customer.getcustbirth());
     }
 
     @Override
     public void deleteById(Connection conn, Integer custid) {
-
+        String sql = "delete from customer where id = ?";
+        update(sql,custid);
     }
 
     @Override
-    public void updateById(Connection conn, Integer custid) {
-
+    public void updateById(Connection conn, Customer customer) {
+        String sql = "update customer set custname = ?,custpassword = ?,custsex = ?,custemail = ?,custaddress = ?,custbirth = ? where custid = ?";
+        update(sql,customer.getcustname(),customer.getcustpassword(),customer.getcustsex(),
+                customer.getcustemail(),customer.getcustaddress(),customer.getcustbirth(),customer.getcustid());
     }
 
     @Override
     public Customer getCustomerById(Connection conn, Integer custid) {
-        return null;
+        String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer where custid = ?";
+//        Customer customer = getInstance(conn, sql,custid);
+        return getInstance(conn, sql,custid);
     }
 
     @Override
     public List<Customer> getAll(Connection conn, Integer custid) {
-        return null;
+        String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer";
+//        List<Customer> list = getForList(conn, sql);
+        return getForList(conn, sql);
     }
 
     @Override
     public Long getCount(Connection conn) {
-        return null;
+        String sql = "select count(*) from customer";
+        return getValue(conn, sql);
     }
 
     @Override
     public Date getMixBirth(Connection conn) {
-        return null;
+        String sql = "select max(custbirth) from customer";
+        return getValue(conn, sql);
     }
 }
