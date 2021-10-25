@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <servlet>
+<!-- 下方是RegistServlet类名 -->
+        <servlet-name>RegistServlet</servlet-name>
+<!-- 下方就是RegistServlet的地址从src开始也就是com.jh.web.RegistServlet -->
+        <servlet-class>com.jh.web.RegistServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+<!-- 上方配置完成后下方一样要配置否则servlet-name会出错 -->
+        <servlet-name>RegistServlet</servlet-name>
+<!-- 下方填写的以/为开头的地址就是对应html文件中表单form的action中要填写的地址(html中不要/) -->
+        <url-pattern>/registServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+<!-- 下方是LoginServlet类名 -->
+        <servlet-name>LoginServlet</servlet-name>
+<!-- 下方就是RegistServlet的地址从src开始也就是com.jh.web.RegistServlet -->
+        <servlet-class>com.jh.web.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+<!-- 上方配置完成后下方一样要配置否则servlet-name会出错 -->
+        <servlet-name>LoginServlet</servlet-name>
+<!-- 下方填写的以/为开头的地址(首字母小写)就是对应html文件中表单form的action中要填写的地址(html中不要/) -->
+        <url-pattern>/loginServlet</url-pattern>
+    </servlet-mapping>
+
+
+
+
+
+
+
+</web-app>

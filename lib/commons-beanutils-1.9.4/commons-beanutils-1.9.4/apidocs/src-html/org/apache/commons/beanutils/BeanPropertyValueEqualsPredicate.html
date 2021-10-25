@@ -1,0 +1,362 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the License for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the License.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.commons.beanutils;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.lang.reflect.InvocationTargetException;<a name="line.20"></a>
+<span class="sourceLineNo">021</span><a name="line.21"></a>
+<span class="sourceLineNo">022</span>import org.apache.commons.collections.Predicate;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import org.apache.commons.logging.Log;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import org.apache.commons.logging.LogFactory;<a name="line.24"></a>
+<span class="sourceLineNo">025</span><a name="line.25"></a>
+<span class="sourceLineNo">026</span><a name="line.26"></a>
+<span class="sourceLineNo">027</span>/**<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * &lt;p&gt;&lt;code&gt;Predicate&lt;/code&gt; that evaluates a property value against a specified value.&lt;/p&gt;<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * &lt;p&gt;<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * An implementation of &lt;code&gt;org.apache.commons.collections.Predicate&lt;/code&gt; that evaluates a<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * property value on the object provided against a specified value and returns &lt;code&gt;true&lt;/code&gt;<a name="line.31"></a>
+<span class="sourceLineNo">032</span> * if equal; &lt;code&gt;false&lt;/code&gt; otherwise.<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * The &lt;code&gt;BeanPropertyValueEqualsPredicate&lt;/code&gt; constructor takes two parameters which<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * determine what property will be evaluated on the target object and what its expected value should<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * be.<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * &lt;dl&gt;<a name="line.36"></a>
+<span class="sourceLineNo">037</span> *    &lt;dt&gt;<a name="line.37"></a>
+<span class="sourceLineNo">038</span> *       &lt;strong&gt;&lt;code&gt;<a name="line.38"></a>
+<span class="sourceLineNo">039</span> *           &lt;pre&gt;public BeanPropertyValueEqualsPredicate( String propertyName, Object propertyValue )&lt;/pre&gt;<a name="line.39"></a>
+<span class="sourceLineNo">040</span> *       &lt;/code&gt;&lt;/strong&gt;<a name="line.40"></a>
+<span class="sourceLineNo">041</span> *    &lt;/dt&gt;<a name="line.41"></a>
+<span class="sourceLineNo">042</span> *    &lt;dd&gt;<a name="line.42"></a>
+<span class="sourceLineNo">043</span> *       Will create a &lt;code&gt;Predicate&lt;/code&gt; that will evaluate the target object and return<a name="line.43"></a>
+<span class="sourceLineNo">044</span> *       &lt;code&gt;true&lt;/code&gt; if the property specified by &lt;code&gt;propertyName&lt;/code&gt; has a value which<a name="line.44"></a>
+<span class="sourceLineNo">045</span> *       is equal to the the value specified by &lt;code&gt;propertyValue&lt;/code&gt;. Or return<a name="line.45"></a>
+<span class="sourceLineNo">046</span> *       &lt;code&gt;false&lt;/code&gt; otherwise.<a name="line.46"></a>
+<span class="sourceLineNo">047</span> *    &lt;/dd&gt;<a name="line.47"></a>
+<span class="sourceLineNo">048</span> * &lt;/dl&gt;<a name="line.48"></a>
+<span class="sourceLineNo">049</span> * &lt;/p&gt;<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * &lt;p&gt;<a name="line.50"></a>
+<span class="sourceLineNo">051</span> * &lt;strong&gt;Note:&lt;/strong&gt; Property names can be a simple, nested, indexed, or mapped property as defined by<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * &lt;code&gt;org.apache.commons.beanutils.PropertyUtils&lt;/code&gt;.  If any object in the property path<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * specified by &lt;code&gt;propertyName&lt;/code&gt; is &lt;code&gt;null&lt;/code&gt; then the outcome is based on the<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * value of the &lt;code&gt;ignoreNull&lt;/code&gt; attribute.<a name="line.54"></a>
+<span class="sourceLineNo">055</span> * &lt;/p&gt;<a name="line.55"></a>
+<span class="sourceLineNo">056</span> * &lt;p&gt;<a name="line.56"></a>
+<span class="sourceLineNo">057</span> * A typical usage might look like:<a name="line.57"></a>
+<span class="sourceLineNo">058</span> * &lt;code&gt;&lt;pre&gt;<a name="line.58"></a>
+<span class="sourceLineNo">059</span> * // create the closure<a name="line.59"></a>
+<span class="sourceLineNo">060</span> * BeanPropertyValueEqualsPredicate predicate =<a name="line.60"></a>
+<span class="sourceLineNo">061</span> *    new BeanPropertyValueEqualsPredicate( "activeEmployee", Boolean.FALSE );<a name="line.61"></a>
+<span class="sourceLineNo">062</span> *<a name="line.62"></a>
+<span class="sourceLineNo">063</span> * // filter the Collection<a name="line.63"></a>
+<span class="sourceLineNo">064</span> * CollectionUtils.filter( peopleCollection, predicate );<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * &lt;/pre&gt;&lt;/code&gt;<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * &lt;/p&gt;<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * &lt;p&gt;<a name="line.67"></a>
+<span class="sourceLineNo">068</span> * This would take a &lt;code&gt;Collection&lt;/code&gt; of person objects and filter out any people whose<a name="line.68"></a>
+<span class="sourceLineNo">069</span> * &lt;code&gt;activeEmployee&lt;/code&gt; property is &lt;code&gt;false&lt;/code&gt;. Assuming...<a name="line.69"></a>
+<span class="sourceLineNo">070</span> * &lt;ul&gt;<a name="line.70"></a>
+<span class="sourceLineNo">071</span> *    &lt;li&gt;<a name="line.71"></a>
+<span class="sourceLineNo">072</span> *       The top level object in the &lt;code&gt;peeopleCollection&lt;/code&gt; is an object which represents a<a name="line.72"></a>
+<span class="sourceLineNo">073</span> *       person.<a name="line.73"></a>
+<span class="sourceLineNo">074</span> *    &lt;/li&gt;<a name="line.74"></a>
+<span class="sourceLineNo">075</span> *    &lt;li&gt;<a name="line.75"></a>
+<span class="sourceLineNo">076</span> *       The person object has a &lt;code&gt;getActiveEmployee()&lt;/code&gt; method which returns<a name="line.76"></a>
+<span class="sourceLineNo">077</span> *       the boolean value for the object's &lt;code&gt;activeEmployee&lt;/code&gt; property.<a name="line.77"></a>
+<span class="sourceLineNo">078</span> *    &lt;/li&gt;<a name="line.78"></a>
+<span class="sourceLineNo">079</span> * &lt;/ul&gt;<a name="line.79"></a>
+<span class="sourceLineNo">080</span> * &lt;/p&gt;<a name="line.80"></a>
+<span class="sourceLineNo">081</span> * &lt;p&gt;<a name="line.81"></a>
+<span class="sourceLineNo">082</span> * Another typical usage might look like:<a name="line.82"></a>
+<span class="sourceLineNo">083</span> * &lt;code&gt;&lt;pre&gt;<a name="line.83"></a>
+<span class="sourceLineNo">084</span> * // create the closure<a name="line.84"></a>
+<span class="sourceLineNo">085</span> * BeanPropertyValueEqualsPredicate predicate =<a name="line.85"></a>
+<span class="sourceLineNo">086</span> *    new BeanPropertyValueEqualsPredicate( "personId", "456-12-1234" );<a name="line.86"></a>
+<span class="sourceLineNo">087</span> *<a name="line.87"></a>
+<span class="sourceLineNo">088</span> * // search the Collection<a name="line.88"></a>
+<span class="sourceLineNo">089</span> * CollectionUtils.find( peopleCollection, predicate );<a name="line.89"></a>
+<span class="sourceLineNo">090</span> * &lt;/pre&gt;&lt;/code&gt;<a name="line.90"></a>
+<span class="sourceLineNo">091</span> * &lt;/p&gt;<a name="line.91"></a>
+<span class="sourceLineNo">092</span> * &lt;p&gt;<a name="line.92"></a>
+<span class="sourceLineNo">093</span> * This would search a &lt;code&gt;Collection&lt;/code&gt; of person objects and return the first object whose<a name="line.93"></a>
+<span class="sourceLineNo">094</span> * &lt;code&gt;personId&lt;/code&gt; property value equals &lt;code&gt;456-12-1234&lt;/code&gt;. Assuming...<a name="line.94"></a>
+<span class="sourceLineNo">095</span> * &lt;ul&gt;<a name="line.95"></a>
+<span class="sourceLineNo">096</span> *    &lt;li&gt;<a name="line.96"></a>
+<span class="sourceLineNo">097</span> *       The top level object in the &lt;code&gt;peeopleCollection&lt;/code&gt; is an object which represents a<a name="line.97"></a>
+<span class="sourceLineNo">098</span> *       person.<a name="line.98"></a>
+<span class="sourceLineNo">099</span> *    &lt;/li&gt;<a name="line.99"></a>
+<span class="sourceLineNo">100</span> *    &lt;li&gt;<a name="line.100"></a>
+<span class="sourceLineNo">101</span> *       The person object has a &lt;code&gt;getPersonId()&lt;/code&gt; method which returns<a name="line.101"></a>
+<span class="sourceLineNo">102</span> *       the value for the object's &lt;code&gt;personId&lt;/code&gt; property.<a name="line.102"></a>
+<span class="sourceLineNo">103</span> *    &lt;/li&gt;<a name="line.103"></a>
+<span class="sourceLineNo">104</span> * &lt;/ul&gt;<a name="line.104"></a>
+<span class="sourceLineNo">105</span> * &lt;/p&gt;<a name="line.105"></a>
+<span class="sourceLineNo">106</span> *<a name="line.106"></a>
+<span class="sourceLineNo">107</span> * @version $Id$<a name="line.107"></a>
+<span class="sourceLineNo">108</span> * @see org.apache.commons.beanutils.PropertyUtils<a name="line.108"></a>
+<span class="sourceLineNo">109</span> * @see org.apache.commons.collections.Predicate<a name="line.109"></a>
+<span class="sourceLineNo">110</span> */<a name="line.110"></a>
+<span class="sourceLineNo">111</span>public class BeanPropertyValueEqualsPredicate implements Predicate {<a name="line.111"></a>
+<span class="sourceLineNo">112</span><a name="line.112"></a>
+<span class="sourceLineNo">113</span>    /** For logging. */<a name="line.113"></a>
+<span class="sourceLineNo">114</span>    private final Log log = LogFactory.getLog(this.getClass());<a name="line.114"></a>
+<span class="sourceLineNo">115</span><a name="line.115"></a>
+<span class="sourceLineNo">116</span>    /**<a name="line.116"></a>
+<span class="sourceLineNo">117</span>     * The name of the property which will be evaluated when this &lt;code&gt;Predicate&lt;/code&gt; is executed.<a name="line.117"></a>
+<span class="sourceLineNo">118</span>     */<a name="line.118"></a>
+<span class="sourceLineNo">119</span>    private String propertyName;<a name="line.119"></a>
+<span class="sourceLineNo">120</span><a name="line.120"></a>
+<span class="sourceLineNo">121</span>    /**<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     * The value that the property specified by &lt;code&gt;propertyName&lt;/code&gt;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>     * will be compared to when this &lt;code&gt;Predicate&lt;/code&gt; executes.<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     */<a name="line.124"></a>
+<span class="sourceLineNo">125</span>    private Object propertyValue;<a name="line.125"></a>
+<span class="sourceLineNo">126</span><a name="line.126"></a>
+<span class="sourceLineNo">127</span>    /**<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * &lt;p&gt;Should &lt;code&gt;null&lt;/code&gt; objects in the property path be ignored?&lt;/p&gt;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     * &lt;p&gt;<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     * Determines whether &lt;code&gt;null&lt;/code&gt; objects in the property path will genenerate an<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; or not. If set to &lt;code&gt;true&lt;/code&gt; then if any objects<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * in the property path evaluate to &lt;code&gt;null&lt;/code&gt; then the<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; throw by &lt;code&gt;PropertyUtils&lt;/code&gt; will be logged but<a name="line.133"></a>
+<span class="sourceLineNo">134</span>     * not rethrown and &lt;code&gt;false&lt;/code&gt; will be returned.  If set to &lt;code&gt;false&lt;/code&gt; then if<a name="line.134"></a>
+<span class="sourceLineNo">135</span>     * any objects in the property path evaluate to &lt;code&gt;null&lt;/code&gt; then the<a name="line.135"></a>
+<span class="sourceLineNo">136</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; throw by &lt;code&gt;PropertyUtils&lt;/code&gt; will be logged and<a name="line.136"></a>
+<span class="sourceLineNo">137</span>     * rethrown.<a name="line.137"></a>
+<span class="sourceLineNo">138</span>     * &lt;/p&gt;<a name="line.138"></a>
+<span class="sourceLineNo">139</span>     */<a name="line.139"></a>
+<span class="sourceLineNo">140</span>    private boolean ignoreNull;<a name="line.140"></a>
+<span class="sourceLineNo">141</span><a name="line.141"></a>
+<span class="sourceLineNo">142</span>    /**<a name="line.142"></a>
+<span class="sourceLineNo">143</span>     * Constructor which takes the name of the property, its expected value to be used in evaluation,<a name="line.143"></a>
+<span class="sourceLineNo">144</span>     * and assumes &lt;code&gt;ignoreNull&lt;/code&gt; to be &lt;code&gt;false&lt;/code&gt;.<a name="line.144"></a>
+<span class="sourceLineNo">145</span>     *<a name="line.145"></a>
+<span class="sourceLineNo">146</span>     * @param propertyName The name of the property that will be evaluated against the expected value.<a name="line.146"></a>
+<span class="sourceLineNo">147</span>     * @param propertyValue The value to use in object evaluation.<a name="line.147"></a>
+<span class="sourceLineNo">148</span>     * @throws IllegalArgumentException If the property name provided is null or empty.<a name="line.148"></a>
+<span class="sourceLineNo">149</span>     */<a name="line.149"></a>
+<span class="sourceLineNo">150</span>    public BeanPropertyValueEqualsPredicate(final String propertyName, final Object propertyValue) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        this(propertyName, propertyValue, false);<a name="line.151"></a>
+<span class="sourceLineNo">152</span>    }<a name="line.152"></a>
+<span class="sourceLineNo">153</span><a name="line.153"></a>
+<span class="sourceLineNo">154</span>    /**<a name="line.154"></a>
+<span class="sourceLineNo">155</span>     * Constructor which takes the name of the property, its expected value<a name="line.155"></a>
+<span class="sourceLineNo">156</span>     * to be used in evaluation, and a boolean which determines whether &lt;code&gt;null&lt;/code&gt; objects in<a name="line.156"></a>
+<span class="sourceLineNo">157</span>     * the property path will genenerate an &lt;code&gt;IllegalArgumentException&lt;/code&gt; or not.<a name="line.157"></a>
+<span class="sourceLineNo">158</span>     *<a name="line.158"></a>
+<span class="sourceLineNo">159</span>     * @param propertyName The name of the property that will be evaluated against the expected value.<a name="line.159"></a>
+<span class="sourceLineNo">160</span>     * @param propertyValue The value to use in object evaluation.<a name="line.160"></a>
+<span class="sourceLineNo">161</span>     * @param ignoreNull Determines whether &lt;code&gt;null&lt;/code&gt; objects in the property path will<a name="line.161"></a>
+<span class="sourceLineNo">162</span>     * genenerate an &lt;code&gt;IllegalArgumentException&lt;/code&gt; or not.<a name="line.162"></a>
+<span class="sourceLineNo">163</span>     * @throws IllegalArgumentException If the property name provided is null or empty.<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     */<a name="line.164"></a>
+<span class="sourceLineNo">165</span>    public BeanPropertyValueEqualsPredicate(final String propertyName, final Object propertyValue, final boolean ignoreNull) {<a name="line.165"></a>
+<span class="sourceLineNo">166</span>        super();<a name="line.166"></a>
+<span class="sourceLineNo">167</span><a name="line.167"></a>
+<span class="sourceLineNo">168</span>        if ((propertyName != null) &amp;&amp; (propertyName.length() &gt; 0)) {<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            this.propertyName = propertyName;<a name="line.169"></a>
+<span class="sourceLineNo">170</span>            this.propertyValue = propertyValue;<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            this.ignoreNull = ignoreNull;<a name="line.171"></a>
+<span class="sourceLineNo">172</span>        } else {<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            throw new IllegalArgumentException("propertyName cannot be null or empty");<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        }<a name="line.174"></a>
+<span class="sourceLineNo">175</span>    }<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>    /**<a name="line.177"></a>
+<span class="sourceLineNo">178</span>     * Evaulates the object provided against the criteria specified when this<a name="line.178"></a>
+<span class="sourceLineNo">179</span>     * &lt;code&gt;BeanPropertyValueEqualsPredicate&lt;/code&gt; was constructed.  Equality is based on<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * either reference or logical equality as defined by the property object's equals method. If<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     * any object in the property path leading up to the target property is &lt;code&gt;null&lt;/code&gt; then<a name="line.181"></a>
+<span class="sourceLineNo">182</span>     * the outcome will be based on the value of the &lt;code&gt;ignoreNull&lt;/code&gt; attribute. By default,<a name="line.182"></a>
+<span class="sourceLineNo">183</span>     * &lt;code&gt;ignoreNull&lt;/code&gt; is &lt;code&gt;false&lt;/code&gt; and would result in an<a name="line.183"></a>
+<span class="sourceLineNo">184</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; if an object in the property path leading up to the<a name="line.184"></a>
+<span class="sourceLineNo">185</span>     * target property is &lt;code&gt;null&lt;/code&gt;.<a name="line.185"></a>
+<span class="sourceLineNo">186</span>     *<a name="line.186"></a>
+<span class="sourceLineNo">187</span>     * @param object The object to be evaluated.<a name="line.187"></a>
+<span class="sourceLineNo">188</span>     * @return True if the object provided meets all the criteria for this &lt;code&gt;Predicate&lt;/code&gt;;<a name="line.188"></a>
+<span class="sourceLineNo">189</span>     * false otherwise.<a name="line.189"></a>
+<span class="sourceLineNo">190</span>     * @throws IllegalArgumentException If an IllegalAccessException, InvocationTargetException, or<a name="line.190"></a>
+<span class="sourceLineNo">191</span>     * NoSuchMethodException is thrown when trying to access the property specified on the object<a name="line.191"></a>
+<span class="sourceLineNo">192</span>     * provided. Or if an object in the property path provided is &lt;code&gt;null&lt;/code&gt; and<a name="line.192"></a>
+<span class="sourceLineNo">193</span>     * &lt;code&gt;ignoreNull&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt;.<a name="line.193"></a>
+<span class="sourceLineNo">194</span>     */<a name="line.194"></a>
+<span class="sourceLineNo">195</span>    public boolean evaluate(final Object object) {<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>        boolean evaluation = false;<a name="line.197"></a>
+<span class="sourceLineNo">198</span><a name="line.198"></a>
+<span class="sourceLineNo">199</span>        try {<a name="line.199"></a>
+<span class="sourceLineNo">200</span>            evaluation = evaluateValue(propertyValue,<a name="line.200"></a>
+<span class="sourceLineNo">201</span>                    PropertyUtils.getProperty(object, propertyName));<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        } catch (final IllegalArgumentException e) {<a name="line.202"></a>
+<span class="sourceLineNo">203</span>            final String errorMsg = "Problem during evaluation. Null value encountered in property path...";<a name="line.203"></a>
+<span class="sourceLineNo">204</span><a name="line.204"></a>
+<span class="sourceLineNo">205</span>            if (ignoreNull) {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>                log.warn("WARNING: " + errorMsg + e);<a name="line.206"></a>
+<span class="sourceLineNo">207</span>            } else {<a name="line.207"></a>
+<span class="sourceLineNo">208</span>                final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);<a name="line.208"></a>
+<span class="sourceLineNo">209</span>                if (!BeanUtils.initCause(iae, e)) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>                    log.error(errorMsg, e);<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                }<a name="line.211"></a>
+<span class="sourceLineNo">212</span>                throw iae;<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            }<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        } catch (final IllegalAccessException e) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>            final String errorMsg = "Unable to access the property provided.";<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            if (!BeanUtils.initCause(iae, e)) {<a name="line.217"></a>
+<span class="sourceLineNo">218</span>                log.error(errorMsg, e);<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            }<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            throw iae;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        } catch (final InvocationTargetException e) {<a name="line.221"></a>
+<span class="sourceLineNo">222</span>            final String errorMsg = "Exception occurred in property's getter";<a name="line.222"></a>
+<span class="sourceLineNo">223</span>            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);<a name="line.223"></a>
+<span class="sourceLineNo">224</span>            if (!BeanUtils.initCause(iae, e)) {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>                log.error(errorMsg, e);<a name="line.225"></a>
+<span class="sourceLineNo">226</span>            }<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            throw iae;<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        } catch (final NoSuchMethodException e) {<a name="line.228"></a>
+<span class="sourceLineNo">229</span>            final String errorMsg = "Property not found.";<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            final IllegalArgumentException iae = new IllegalArgumentException(errorMsg);<a name="line.230"></a>
+<span class="sourceLineNo">231</span>            if (!BeanUtils.initCause(iae, e)) {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>                log.error(errorMsg, e);<a name="line.232"></a>
+<span class="sourceLineNo">233</span>            }<a name="line.233"></a>
+<span class="sourceLineNo">234</span>            throw iae;<a name="line.234"></a>
+<span class="sourceLineNo">235</span>        }<a name="line.235"></a>
+<span class="sourceLineNo">236</span><a name="line.236"></a>
+<span class="sourceLineNo">237</span>        return evaluation;<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    }<a name="line.238"></a>
+<span class="sourceLineNo">239</span><a name="line.239"></a>
+<span class="sourceLineNo">240</span>    /**<a name="line.240"></a>
+<span class="sourceLineNo">241</span>     * Utility method which evaluates whether the actual property value equals the expected property<a name="line.241"></a>
+<span class="sourceLineNo">242</span>     * value.<a name="line.242"></a>
+<span class="sourceLineNo">243</span>     *<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     * @param expected The expected value.<a name="line.244"></a>
+<span class="sourceLineNo">245</span>     * @param actual The actual value.<a name="line.245"></a>
+<span class="sourceLineNo">246</span>     * @return True if they are equal; false otherwise.<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     */<a name="line.247"></a>
+<span class="sourceLineNo">248</span>    protected boolean evaluateValue(final Object expected, final Object actual) {<a name="line.248"></a>
+<span class="sourceLineNo">249</span>        return (expected == actual) || ((expected != null) &amp;&amp; expected.equals(actual));<a name="line.249"></a>
+<span class="sourceLineNo">250</span>    }<a name="line.250"></a>
+<span class="sourceLineNo">251</span><a name="line.251"></a>
+<span class="sourceLineNo">252</span>    /**<a name="line.252"></a>
+<span class="sourceLineNo">253</span>     * Returns the name of the property which will be evaluated when this &lt;code&gt;Predicate&lt;/code&gt; is<a name="line.253"></a>
+<span class="sourceLineNo">254</span>     * executed.<a name="line.254"></a>
+<span class="sourceLineNo">255</span>     *<a name="line.255"></a>
+<span class="sourceLineNo">256</span>     * @return The name of the property which will be evaluated when this &lt;code&gt;Predicate&lt;/code&gt; is<a name="line.256"></a>
+<span class="sourceLineNo">257</span>     * executed.<a name="line.257"></a>
+<span class="sourceLineNo">258</span>     */<a name="line.258"></a>
+<span class="sourceLineNo">259</span>    public String getPropertyName() {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>        return propertyName;<a name="line.260"></a>
+<span class="sourceLineNo">261</span>    }<a name="line.261"></a>
+<span class="sourceLineNo">262</span><a name="line.262"></a>
+<span class="sourceLineNo">263</span>    /**<a name="line.263"></a>
+<span class="sourceLineNo">264</span>     * Returns the value that the property specified by &lt;code&gt;propertyName&lt;/code&gt; will be compared to<a name="line.264"></a>
+<span class="sourceLineNo">265</span>     * when this &lt;code&gt;Predicate&lt;/code&gt; executes.<a name="line.265"></a>
+<span class="sourceLineNo">266</span>     *<a name="line.266"></a>
+<span class="sourceLineNo">267</span>     * @return The value that the property specified by &lt;code&gt;propertyName&lt;/code&gt; will be compared to<a name="line.267"></a>
+<span class="sourceLineNo">268</span>     * when this &lt;code&gt;Predicate&lt;/code&gt; executes.<a name="line.268"></a>
+<span class="sourceLineNo">269</span>     */<a name="line.269"></a>
+<span class="sourceLineNo">270</span>    public Object getPropertyValue() {<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        return propertyValue;<a name="line.271"></a>
+<span class="sourceLineNo">272</span>    }<a name="line.272"></a>
+<span class="sourceLineNo">273</span><a name="line.273"></a>
+<span class="sourceLineNo">274</span>    /**<a name="line.274"></a>
+<span class="sourceLineNo">275</span>     * Returns the flag which determines whether &lt;code&gt;null&lt;/code&gt; objects in the property path will<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * genenerate an &lt;code&gt;IllegalArgumentException&lt;/code&gt; or not. If set to &lt;code&gt;true&lt;/code&gt; then<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * if any objects in the property path evaluate to &lt;code&gt;null&lt;/code&gt; then the<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; throw by &lt;code&gt;PropertyUtils&lt;/code&gt; will be logged but<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * not rethrown and &lt;code&gt;false&lt;/code&gt; will be returned.  If set to &lt;code&gt;false&lt;/code&gt; then if<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     * any objects in the property path evaluate to &lt;code&gt;null&lt;/code&gt; then the<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     * &lt;code&gt;IllegalArgumentException&lt;/code&gt; throw by &lt;code&gt;PropertyUtils&lt;/code&gt; will be logged and<a name="line.281"></a>
+<span class="sourceLineNo">282</span>     * rethrown.<a name="line.282"></a>
+<span class="sourceLineNo">283</span>     *<a name="line.283"></a>
+<span class="sourceLineNo">284</span>     * @return The flag which determines whether &lt;code&gt;null&lt;/code&gt; objects in the property path will<a name="line.284"></a>
+<span class="sourceLineNo">285</span>     * genenerate an &lt;code&gt;IllegalArgumentException&lt;/code&gt; or not.<a name="line.285"></a>
+<span class="sourceLineNo">286</span>     */<a name="line.286"></a>
+<span class="sourceLineNo">287</span>    public boolean isIgnoreNull() {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>        return ignoreNull;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>    }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>}<a name="line.290"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>

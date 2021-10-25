@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<span class="sourceLineNo">004</span> * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *<a name="line.8"></a>
+<span class="sourceLineNo">009</span> *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<span class="sourceLineNo">010</span> *<a name="line.10"></a>
+<span class="sourceLineNo">011</span> * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<span class="sourceLineNo">012</span> * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<span class="sourceLineNo">014</span> * See the License for the specific language governing permissions and<a name="line.14"></a>
+<span class="sourceLineNo">015</span> * limitations under the License.<a name="line.15"></a>
+<span class="sourceLineNo">016</span> */<a name="line.16"></a>
+<span class="sourceLineNo">017</span><a name="line.17"></a>
+<span class="sourceLineNo">018</span>package org.apache.commons.beanutils;<a name="line.18"></a>
+<span class="sourceLineNo">019</span><a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.lang.reflect.Constructor;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.lang.reflect.InvocationTargetException;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.lang.reflect.Modifier;<a name="line.22"></a>
+<span class="sourceLineNo">023</span><a name="line.23"></a>
+<span class="sourceLineNo">024</span>/**<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * &lt;p&gt; Utility reflection methods focussed on constructors, modelled after {@link MethodUtils}. &lt;/p&gt;<a name="line.25"></a>
+<span class="sourceLineNo">026</span> *<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * &lt;h3&gt;Known Limitations&lt;/h3&gt;<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * &lt;h4&gt;Accessing Public Constructors In A Default Access Superclass&lt;/h4&gt;<a name="line.28"></a>
+<span class="sourceLineNo">029</span> * &lt;p&gt;There is an issue when invoking public constructors contained in a default access superclass.<a name="line.29"></a>
+<span class="sourceLineNo">030</span> * Reflection locates these constructors fine and correctly assigns them as public.<a name="line.30"></a>
+<span class="sourceLineNo">031</span> * However, an &lt;code&gt;IllegalAccessException&lt;/code&gt; is thrown if the constructors is invoked.&lt;/p&gt;<a name="line.31"></a>
+<span class="sourceLineNo">032</span> *<a name="line.32"></a>
+<span class="sourceLineNo">033</span> * &lt;p&gt;&lt;code&gt;ConstructorUtils&lt;/code&gt; contains a workaround for this situation.<a name="line.33"></a>
+<span class="sourceLineNo">034</span> * It will attempt to call &lt;code&gt;setAccessible&lt;/code&gt; on this constructor.<a name="line.34"></a>
+<span class="sourceLineNo">035</span> * If this call succeeds, then the method can be invoked as normal.<a name="line.35"></a>
+<span class="sourceLineNo">036</span> * This call will only succeed when the application has sufficient security privilages.<a name="line.36"></a>
+<span class="sourceLineNo">037</span> * If this call fails then a warning will be logged and the method may fail.&lt;/p&gt;<a name="line.37"></a>
+<span class="sourceLineNo">038</span> *<a name="line.38"></a>
+<span class="sourceLineNo">039</span> * @version $Id$<a name="line.39"></a>
+<span class="sourceLineNo">040</span> */<a name="line.40"></a>
+<span class="sourceLineNo">041</span>public class ConstructorUtils {<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>    // --------------------------------------------------------- Private Members<a name="line.43"></a>
+<span class="sourceLineNo">044</span>    /** An empty class array */<a name="line.44"></a>
+<span class="sourceLineNo">045</span>    private static final Class&lt;?&gt;[] EMPTY_CLASS_PARAMETERS = new Class&lt;?&gt;[0];<a name="line.45"></a>
+<span class="sourceLineNo">046</span>    /** An empty object array */<a name="line.46"></a>
+<span class="sourceLineNo">047</span>    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>    // --------------------------------------------------------- Public Methods<a name="line.49"></a>
+<span class="sourceLineNo">050</span><a name="line.50"></a>
+<span class="sourceLineNo">051</span>    /**<a name="line.51"></a>
+<span class="sourceLineNo">052</span>     * &lt;p&gt;Convenience method returning new instance of &lt;code&gt;klazz&lt;/code&gt; using a single argument constructor.<a name="line.52"></a>
+<span class="sourceLineNo">053</span>     * The formal parameter type is inferred from the actual values of &lt;code&gt;arg&lt;/code&gt;.<a name="line.53"></a>
+<span class="sourceLineNo">054</span>     * See {@link #invokeExactConstructor(Class, Object[], Class[])} for more details.&lt;/p&gt;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>     *<a name="line.55"></a>
+<span class="sourceLineNo">056</span>     * &lt;p&gt;The signatures should be assignment compatible.&lt;/p&gt;<a name="line.56"></a>
+<span class="sourceLineNo">057</span>     *<a name="line.57"></a>
+<span class="sourceLineNo">058</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.58"></a>
+<span class="sourceLineNo">059</span>     * @param klass the class to be constructed.<a name="line.59"></a>
+<span class="sourceLineNo">060</span>     * @param arg the actual argument. May be null (this will result in calling the default constructor).<a name="line.60"></a>
+<span class="sourceLineNo">061</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>     *<a name="line.62"></a>
+<span class="sourceLineNo">063</span>     * @throws NoSuchMethodException If the constructor cannot be found<a name="line.63"></a>
+<span class="sourceLineNo">064</span>     * @throws IllegalAccessException If an error occurs accessing the constructor<a name="line.64"></a>
+<span class="sourceLineNo">065</span>     * @throws InvocationTargetException If an error occurs invoking the constructor<a name="line.65"></a>
+<span class="sourceLineNo">066</span>     * @throws InstantiationException If an error occurs instantiating the class<a name="line.66"></a>
+<span class="sourceLineNo">067</span>     *<a name="line.67"></a>
+<span class="sourceLineNo">068</span>     * @see #invokeConstructor(java.lang.Class, java.lang.Object[], java.lang.Class[])<a name="line.68"></a>
+<span class="sourceLineNo">069</span>     */<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    public static &lt;T&gt; T invokeConstructor(final Class&lt;T&gt; klass, final Object arg)<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        throws<a name="line.71"></a>
+<span class="sourceLineNo">072</span>            NoSuchMethodException,<a name="line.72"></a>
+<span class="sourceLineNo">073</span>            IllegalAccessException,<a name="line.73"></a>
+<span class="sourceLineNo">074</span>            InvocationTargetException,<a name="line.74"></a>
+<span class="sourceLineNo">075</span>            InstantiationException {<a name="line.75"></a>
+<span class="sourceLineNo">076</span><a name="line.76"></a>
+<span class="sourceLineNo">077</span>        final Object[] args = toArray(arg);<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        return invokeConstructor(klass, args);<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    }<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>    /**<a name="line.81"></a>
+<span class="sourceLineNo">082</span>     * &lt;p&gt;Returns new instance of &lt;code&gt;klazz&lt;/code&gt; created using the actual arguments &lt;code&gt;args&lt;/code&gt;.<a name="line.82"></a>
+<span class="sourceLineNo">083</span>     * The formal parameter types are inferred from the actual values of &lt;code&gt;args&lt;/code&gt;.<a name="line.83"></a>
+<span class="sourceLineNo">084</span>     * See {@link #invokeExactConstructor(Class, Object[], Class[])} for more details.&lt;/p&gt;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>     *<a name="line.85"></a>
+<span class="sourceLineNo">086</span>     * &lt;p&gt;The signatures should be assignment compatible.&lt;/p&gt;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     *<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * @param klass the class to be constructed.<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * @param args actual argument array. May be null (this will result in calling the default constructor).<a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     *<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * @throws NoSuchMethodException If the constructor cannot be found<a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @throws IllegalAccessException If an error occurs accessing the constructor<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     * @throws InvocationTargetException If an error occurs invoking the constructor<a name="line.95"></a>
+<span class="sourceLineNo">096</span>     * @throws InstantiationException If an error occurs instantiating the class<a name="line.96"></a>
+<span class="sourceLineNo">097</span>     *<a name="line.97"></a>
+<span class="sourceLineNo">098</span>     * @see #invokeConstructor(java.lang.Class, java.lang.Object[], java.lang.Class[])<a name="line.98"></a>
+<span class="sourceLineNo">099</span>     */<a name="line.99"></a>
+<span class="sourceLineNo">100</span>    public static &lt;T&gt; T invokeConstructor(final Class&lt;T&gt; klass, Object[] args)<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        throws<a name="line.101"></a>
+<span class="sourceLineNo">102</span>            NoSuchMethodException,<a name="line.102"></a>
+<span class="sourceLineNo">103</span>            IllegalAccessException,<a name="line.103"></a>
+<span class="sourceLineNo">104</span>            InvocationTargetException,<a name="line.104"></a>
+<span class="sourceLineNo">105</span>            InstantiationException {<a name="line.105"></a>
+<span class="sourceLineNo">106</span><a name="line.106"></a>
+<span class="sourceLineNo">107</span>        if (null == args) {<a name="line.107"></a>
+<span class="sourceLineNo">108</span>            args = EMPTY_OBJECT_ARRAY;<a name="line.108"></a>
+<span class="sourceLineNo">109</span>        }<a name="line.109"></a>
+<span class="sourceLineNo">110</span>        final int arguments = args.length;<a name="line.110"></a>
+<span class="sourceLineNo">111</span>        final Class&lt;?&gt; parameterTypes[] = new Class&lt;?&gt;[arguments];<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        for (int i = 0; i &lt; arguments; i++) {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>            parameterTypes[i] = args[i].getClass();<a name="line.113"></a>
+<span class="sourceLineNo">114</span>        }<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        return invokeConstructor(klass, args, parameterTypes);<a name="line.115"></a>
+<span class="sourceLineNo">116</span>    }<a name="line.116"></a>
+<span class="sourceLineNo">117</span><a name="line.117"></a>
+<span class="sourceLineNo">118</span>    /**<a name="line.118"></a>
+<span class="sourceLineNo">119</span>     * &lt;p&gt;Returns new instance of &lt;code&gt;klazz&lt;/code&gt; created using constructor<a name="line.119"></a>
+<span class="sourceLineNo">120</span>     * with signature &lt;code&gt;parameterTypes&lt;/code&gt; and actual arguments &lt;code&gt;args&lt;/code&gt;.&lt;/p&gt;<a name="line.120"></a>
+<span class="sourceLineNo">121</span>     *<a name="line.121"></a>
+<span class="sourceLineNo">122</span>     * &lt;p&gt;The signatures should be assignment compatible.&lt;/p&gt;<a name="line.122"></a>
+<span class="sourceLineNo">123</span>     *<a name="line.123"></a>
+<span class="sourceLineNo">124</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.124"></a>
+<span class="sourceLineNo">125</span>     * @param klass the class to be constructed.<a name="line.125"></a>
+<span class="sourceLineNo">126</span>     * @param args actual argument array. May be null (this will result in calling the default constructor).<a name="line.126"></a>
+<span class="sourceLineNo">127</span>     * @param parameterTypes parameter types array<a name="line.127"></a>
+<span class="sourceLineNo">128</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.128"></a>
+<span class="sourceLineNo">129</span>     *<a name="line.129"></a>
+<span class="sourceLineNo">130</span>     * @throws NoSuchMethodException if matching constructor cannot be found<a name="line.130"></a>
+<span class="sourceLineNo">131</span>     * @throws IllegalAccessException thrown on the constructor's invocation<a name="line.131"></a>
+<span class="sourceLineNo">132</span>     * @throws InvocationTargetException thrown on the constructor's invocation<a name="line.132"></a>
+<span class="sourceLineNo">133</span>     * @throws InstantiationException thrown on the constructor's invocation<a name="line.133"></a>
+<span class="sourceLineNo">134</span>     * @see Constructor#newInstance<a name="line.134"></a>
+<span class="sourceLineNo">135</span>     */<a name="line.135"></a>
+<span class="sourceLineNo">136</span>    public static &lt;T&gt; T invokeConstructor(<a name="line.136"></a>
+<span class="sourceLineNo">137</span>        final Class&lt;T&gt; klass,<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        Object[] args,<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        Class&lt;?&gt;[] parameterTypes)<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        throws<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            NoSuchMethodException,<a name="line.141"></a>
+<span class="sourceLineNo">142</span>            IllegalAccessException,<a name="line.142"></a>
+<span class="sourceLineNo">143</span>            InvocationTargetException,<a name="line.143"></a>
+<span class="sourceLineNo">144</span>            InstantiationException {<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>        if (parameterTypes == null) {<a name="line.146"></a>
+<span class="sourceLineNo">147</span>            parameterTypes = EMPTY_CLASS_PARAMETERS;<a name="line.147"></a>
+<span class="sourceLineNo">148</span>        }<a name="line.148"></a>
+<span class="sourceLineNo">149</span>        if (args == null) {<a name="line.149"></a>
+<span class="sourceLineNo">150</span>            args = EMPTY_OBJECT_ARRAY;<a name="line.150"></a>
+<span class="sourceLineNo">151</span>        }<a name="line.151"></a>
+<span class="sourceLineNo">152</span><a name="line.152"></a>
+<span class="sourceLineNo">153</span>        final Constructor&lt;T&gt; ctor =<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            getMatchingAccessibleConstructor(klass, parameterTypes);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>        if (null == ctor) {<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            throw new NoSuchMethodException(<a name="line.156"></a>
+<span class="sourceLineNo">157</span>                "No such accessible constructor on object: " + klass.getName());<a name="line.157"></a>
+<span class="sourceLineNo">158</span>        }<a name="line.158"></a>
+<span class="sourceLineNo">159</span>        return ctor.newInstance(args);<a name="line.159"></a>
+<span class="sourceLineNo">160</span>    }<a name="line.160"></a>
+<span class="sourceLineNo">161</span><a name="line.161"></a>
+<span class="sourceLineNo">162</span><a name="line.162"></a>
+<span class="sourceLineNo">163</span>    /**<a name="line.163"></a>
+<span class="sourceLineNo">164</span>     * &lt;p&gt;Convenience method returning new instance of &lt;code&gt;klazz&lt;/code&gt; using a single argument constructor.<a name="line.164"></a>
+<span class="sourceLineNo">165</span>     * The formal parameter type is inferred from the actual values of &lt;code&gt;arg&lt;/code&gt;.<a name="line.165"></a>
+<span class="sourceLineNo">166</span>     * See {@link #invokeExactConstructor(Class, Object[], Class[])} for more details.&lt;/p&gt;<a name="line.166"></a>
+<span class="sourceLineNo">167</span>     *<a name="line.167"></a>
+<span class="sourceLineNo">168</span>     * &lt;p&gt;The signatures should match exactly.&lt;/p&gt;<a name="line.168"></a>
+<span class="sourceLineNo">169</span>     *<a name="line.169"></a>
+<span class="sourceLineNo">170</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.170"></a>
+<span class="sourceLineNo">171</span>     * @param klass the class to be constructed.<a name="line.171"></a>
+<span class="sourceLineNo">172</span>     * @param arg the actual argument. May be null (this will result in calling the default constructor).<a name="line.172"></a>
+<span class="sourceLineNo">173</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.173"></a>
+<span class="sourceLineNo">174</span>     *<a name="line.174"></a>
+<span class="sourceLineNo">175</span>     * @throws NoSuchMethodException If the constructor cannot be found<a name="line.175"></a>
+<span class="sourceLineNo">176</span>     * @throws IllegalAccessException If an error occurs accessing the constructor<a name="line.176"></a>
+<span class="sourceLineNo">177</span>     * @throws InvocationTargetException If an error occurs invoking the constructor<a name="line.177"></a>
+<span class="sourceLineNo">178</span>     * @throws InstantiationException If an error occurs instantiating the class<a name="line.178"></a>
+<span class="sourceLineNo">179</span>     *<a name="line.179"></a>
+<span class="sourceLineNo">180</span>     * @see #invokeExactConstructor(java.lang.Class, java.lang.Object[], java.lang.Class[])<a name="line.180"></a>
+<span class="sourceLineNo">181</span>     */<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    public static &lt;T&gt; T invokeExactConstructor(final Class&lt;T&gt; klass, final Object arg)<a name="line.182"></a>
+<span class="sourceLineNo">183</span>        throws<a name="line.183"></a>
+<span class="sourceLineNo">184</span>            NoSuchMethodException,<a name="line.184"></a>
+<span class="sourceLineNo">185</span>            IllegalAccessException,<a name="line.185"></a>
+<span class="sourceLineNo">186</span>            InvocationTargetException,<a name="line.186"></a>
+<span class="sourceLineNo">187</span>            InstantiationException {<a name="line.187"></a>
+<span class="sourceLineNo">188</span><a name="line.188"></a>
+<span class="sourceLineNo">189</span>        final Object[] args = toArray(arg);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        return invokeExactConstructor(klass, args);<a name="line.190"></a>
+<span class="sourceLineNo">191</span>    }<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>    /**<a name="line.193"></a>
+<span class="sourceLineNo">194</span>     * &lt;p&gt;Returns new instance of &lt;code&gt;klazz&lt;/code&gt; created using the actual arguments &lt;code&gt;args&lt;/code&gt;.<a name="line.194"></a>
+<span class="sourceLineNo">195</span>     * The formal parameter types are inferred from the actual values of &lt;code&gt;args&lt;/code&gt;.<a name="line.195"></a>
+<span class="sourceLineNo">196</span>     * See {@link #invokeExactConstructor(Class, Object[], Class[])} for more details.&lt;/p&gt;<a name="line.196"></a>
+<span class="sourceLineNo">197</span>     *<a name="line.197"></a>
+<span class="sourceLineNo">198</span>     * &lt;p&gt;The signatures should match exactly.&lt;/p&gt;<a name="line.198"></a>
+<span class="sourceLineNo">199</span>     *<a name="line.199"></a>
+<span class="sourceLineNo">200</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.200"></a>
+<span class="sourceLineNo">201</span>     * @param klass the class to be constructed.<a name="line.201"></a>
+<span class="sourceLineNo">202</span>     * @param args actual argument array. May be null (this will result in calling the default constructor).<a name="line.202"></a>
+<span class="sourceLineNo">203</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.203"></a>
+<span class="sourceLineNo">204</span>     *<a name="line.204"></a>
+<span class="sourceLineNo">205</span>     * @throws NoSuchMethodException If the constructor cannot be found<a name="line.205"></a>
+<span class="sourceLineNo">206</span>     * @throws IllegalAccessException If an error occurs accessing the constructor<a name="line.206"></a>
+<span class="sourceLineNo">207</span>     * @throws InvocationTargetException If an error occurs invoking the constructor<a name="line.207"></a>
+<span class="sourceLineNo">208</span>     * @throws InstantiationException If an error occurs instantiating the class<a name="line.208"></a>
+<span class="sourceLineNo">209</span>     *<a name="line.209"></a>
+<span class="sourceLineNo">210</span>     * @see #invokeExactConstructor(java.lang.Class, java.lang.Object[], java.lang.Class[])<a name="line.210"></a>
+<span class="sourceLineNo">211</span>     */<a name="line.211"></a>
+<span class="sourceLineNo">212</span>    public static &lt;T&gt; T invokeExactConstructor(final Class&lt;T&gt; klass, Object[] args)<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        throws<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            NoSuchMethodException,<a name="line.214"></a>
+<span class="sourceLineNo">215</span>            IllegalAccessException,<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            InvocationTargetException,<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            InstantiationException {<a name="line.217"></a>
+<span class="sourceLineNo">218</span><a name="line.218"></a>
+<span class="sourceLineNo">219</span>        if (null == args) {<a name="line.219"></a>
+<span class="sourceLineNo">220</span>            args = EMPTY_OBJECT_ARRAY;<a name="line.220"></a>
+<span class="sourceLineNo">221</span>        }<a name="line.221"></a>
+<span class="sourceLineNo">222</span>        final int arguments = args.length;<a name="line.222"></a>
+<span class="sourceLineNo">223</span>        final Class&lt;?&gt; parameterTypes[] = new Class[arguments];<a name="line.223"></a>
+<span class="sourceLineNo">224</span>        for (int i = 0; i &lt; arguments; i++) {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>            parameterTypes[i] = args[i].getClass();<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        }<a name="line.226"></a>
+<span class="sourceLineNo">227</span>        return invokeExactConstructor(klass, args, parameterTypes);<a name="line.227"></a>
+<span class="sourceLineNo">228</span>    }<a name="line.228"></a>
+<span class="sourceLineNo">229</span><a name="line.229"></a>
+<span class="sourceLineNo">230</span>    /**<a name="line.230"></a>
+<span class="sourceLineNo">231</span>     * &lt;p&gt;Returns new instance of &lt;code&gt;klazz&lt;/code&gt; created using constructor<a name="line.231"></a>
+<span class="sourceLineNo">232</span>     * with signature &lt;code&gt;parameterTypes&lt;/code&gt; and actual arguments<a name="line.232"></a>
+<span class="sourceLineNo">233</span>     * &lt;code&gt;args&lt;/code&gt;.&lt;/p&gt;<a name="line.233"></a>
+<span class="sourceLineNo">234</span>     *<a name="line.234"></a>
+<span class="sourceLineNo">235</span>     * &lt;p&gt;The signatures should match exactly.&lt;/p&gt;<a name="line.235"></a>
+<span class="sourceLineNo">236</span>     *<a name="line.236"></a>
+<span class="sourceLineNo">237</span>     * @param &lt;T&gt; the type of the object to be constructed<a name="line.237"></a>
+<span class="sourceLineNo">238</span>     * @param klass the class to be constructed.<a name="line.238"></a>
+<span class="sourceLineNo">239</span>     * @param args actual argument array. May be null (this will result in calling the default constructor).<a name="line.239"></a>
+<span class="sourceLineNo">240</span>     * @param parameterTypes parameter types array<a name="line.240"></a>
+<span class="sourceLineNo">241</span>     * @return new instance of &lt;code&gt;klazz&lt;/code&gt;<a name="line.241"></a>
+<span class="sourceLineNo">242</span>     *<a name="line.242"></a>
+<span class="sourceLineNo">243</span>     * @throws NoSuchMethodException if matching constructor cannot be found<a name="line.243"></a>
+<span class="sourceLineNo">244</span>     * @throws IllegalAccessException thrown on the constructor's invocation<a name="line.244"></a>
+<span class="sourceLineNo">245</span>     * @throws InvocationTargetException thrown on the constructor's invocation<a name="line.245"></a>
+<span class="sourceLineNo">246</span>     * @throws InstantiationException thrown on the constructor's invocation<a name="line.246"></a>
+<span class="sourceLineNo">247</span>     * @see Constructor#newInstance<a name="line.247"></a>
+<span class="sourceLineNo">248</span>     */<a name="line.248"></a>
+<span class="sourceLineNo">249</span>    public static &lt;T&gt; T invokeExactConstructor(<a name="line.249"></a>
+<span class="sourceLineNo">250</span>        final Class&lt;T&gt; klass,<a name="line.250"></a>
+<span class="sourceLineNo">251</span>        Object[] args,<a name="line.251"></a>
+<span class="sourceLineNo">252</span>        Class&lt;?&gt;[] parameterTypes)<a name="line.252"></a>
+<span class="sourceLineNo">253</span>        throws<a name="line.253"></a>
+<span class="sourceLineNo">254</span>            NoSuchMethodException,<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            IllegalAccessException,<a name="line.255"></a>
+<span class="sourceLineNo">256</span>            InvocationTargetException,<a name="line.256"></a>
+<span class="sourceLineNo">257</span>            InstantiationException {<a name="line.257"></a>
+<span class="sourceLineNo">258</span><a name="line.258"></a>
+<span class="sourceLineNo">259</span>        if (args == null) {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            args = EMPTY_OBJECT_ARRAY;<a name="line.260"></a>
+<span class="sourceLineNo">261</span>        }<a name="line.261"></a>
+<span class="sourceLineNo">262</span><a name="line.262"></a>
+<span class="sourceLineNo">263</span>        if (parameterTypes == null) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>            parameterTypes = EMPTY_CLASS_PARAMETERS;<a name="line.264"></a>
+<span class="sourceLineNo">265</span>        }<a name="line.265"></a>
+<span class="sourceLineNo">266</span><a name="line.266"></a>
+<span class="sourceLineNo">267</span>        final Constructor&lt;T&gt; ctor = getAccessibleConstructor(klass, parameterTypes);<a name="line.267"></a>
+<span class="sourceLineNo">268</span>        if (null == ctor) {<a name="line.268"></a>
+<span class="sourceLineNo">269</span>            throw new NoSuchMethodException(<a name="line.269"></a>
+<span class="sourceLineNo">270</span>                "No such accessible constructor on object: " + klass.getName());<a name="line.270"></a>
+<span class="sourceLineNo">271</span>        }<a name="line.271"></a>
+<span class="sourceLineNo">272</span>        return ctor.newInstance(args);<a name="line.272"></a>
+<span class="sourceLineNo">273</span>    }<a name="line.273"></a>
+<span class="sourceLineNo">274</span><a name="line.274"></a>
+<span class="sourceLineNo">275</span>    /**<a name="line.275"></a>
+<span class="sourceLineNo">276</span>     * Returns a constructor with single argument.<a name="line.276"></a>
+<span class="sourceLineNo">277</span>     * @param &lt;T&gt; the type of the constructor<a name="line.277"></a>
+<span class="sourceLineNo">278</span>     * @param klass the class to be constructed<a name="line.278"></a>
+<span class="sourceLineNo">279</span>     * @param parameterType The constructor parameter type<a name="line.279"></a>
+<span class="sourceLineNo">280</span>     * @return null if matching accessible constructor can not be found.<a name="line.280"></a>
+<span class="sourceLineNo">281</span>     * @see Class#getConstructor<a name="line.281"></a>
+<span class="sourceLineNo">282</span>     * @see #getAccessibleConstructor(java.lang.reflect.Constructor)<a name="line.282"></a>
+<span class="sourceLineNo">283</span>     */<a name="line.283"></a>
+<span class="sourceLineNo">284</span>    public static &lt;T&gt; Constructor&lt;T&gt; getAccessibleConstructor(<a name="line.284"></a>
+<span class="sourceLineNo">285</span>        final Class&lt;T&gt; klass,<a name="line.285"></a>
+<span class="sourceLineNo">286</span>        final Class&lt;?&gt; parameterType) {<a name="line.286"></a>
+<span class="sourceLineNo">287</span><a name="line.287"></a>
+<span class="sourceLineNo">288</span>        final Class&lt;?&gt;[] parameterTypes = { parameterType };<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        return getAccessibleConstructor(klass, parameterTypes);<a name="line.289"></a>
+<span class="sourceLineNo">290</span>    }<a name="line.290"></a>
+<span class="sourceLineNo">291</span><a name="line.291"></a>
+<span class="sourceLineNo">292</span>    /**<a name="line.292"></a>
+<span class="sourceLineNo">293</span>     * Returns a constructor given a class and signature.<a name="line.293"></a>
+<span class="sourceLineNo">294</span>     * @param &lt;T&gt; the type to be constructed<a name="line.294"></a>
+<span class="sourceLineNo">295</span>     * @param klass the class to be constructed<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     * @param parameterTypes the parameter array<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     * @return null if matching accessible constructor can not be found<a name="line.297"></a>
+<span class="sourceLineNo">298</span>     * @see Class#getConstructor<a name="line.298"></a>
+<span class="sourceLineNo">299</span>     * @see #getAccessibleConstructor(java.lang.reflect.Constructor)<a name="line.299"></a>
+<span class="sourceLineNo">300</span>     */<a name="line.300"></a>
+<span class="sourceLineNo">301</span>    public static &lt;T&gt; Constructor&lt;T&gt; getAccessibleConstructor(<a name="line.301"></a>
+<span class="sourceLineNo">302</span>        final Class&lt;T&gt; klass,<a name="line.302"></a>
+<span class="sourceLineNo">303</span>        final Class&lt;?&gt;[] parameterTypes) {<a name="line.303"></a>
+<span class="sourceLineNo">304</span><a name="line.304"></a>
+<span class="sourceLineNo">305</span>        try {<a name="line.305"></a>
+<span class="sourceLineNo">306</span>            return getAccessibleConstructor(<a name="line.306"></a>
+<span class="sourceLineNo">307</span>                klass.getConstructor(parameterTypes));<a name="line.307"></a>
+<span class="sourceLineNo">308</span>        } catch (final NoSuchMethodException e) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>            return (null);<a name="line.309"></a>
+<span class="sourceLineNo">310</span>        }<a name="line.310"></a>
+<span class="sourceLineNo">311</span>    }<a name="line.311"></a>
+<span class="sourceLineNo">312</span><a name="line.312"></a>
+<span class="sourceLineNo">313</span>    /**<a name="line.313"></a>
+<span class="sourceLineNo">314</span>     * Returns accessible version of the given constructor.<a name="line.314"></a>
+<span class="sourceLineNo">315</span>     * @param &lt;T&gt; the type of the constructor<a name="line.315"></a>
+<span class="sourceLineNo">316</span>     * @param ctor prototype constructor object.<a name="line.316"></a>
+<span class="sourceLineNo">317</span>     * @return &lt;code&gt;null&lt;/code&gt; if accessible constructor can not be found.<a name="line.317"></a>
+<span class="sourceLineNo">318</span>     * @see java.lang.SecurityManager<a name="line.318"></a>
+<span class="sourceLineNo">319</span>     */<a name="line.319"></a>
+<span class="sourceLineNo">320</span>    public static &lt;T&gt; Constructor&lt;T&gt; getAccessibleConstructor(final Constructor&lt;T&gt; ctor) {<a name="line.320"></a>
+<span class="sourceLineNo">321</span><a name="line.321"></a>
+<span class="sourceLineNo">322</span>        // Make sure we have a method to check<a name="line.322"></a>
+<span class="sourceLineNo">323</span>        if (ctor == null) {<a name="line.323"></a>
+<span class="sourceLineNo">324</span>            return (null);<a name="line.324"></a>
+<span class="sourceLineNo">325</span>        }<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>        // If the requested method is not public we cannot call it<a name="line.327"></a>
+<span class="sourceLineNo">328</span>        if (!Modifier.isPublic(ctor.getModifiers())) {<a name="line.328"></a>
+<span class="sourceLineNo">329</span>            return (null);<a name="line.329"></a>
+<span class="sourceLineNo">330</span>        }<a name="line.330"></a>
+<span class="sourceLineNo">331</span><a name="line.331"></a>
+<span class="sourceLineNo">332</span>        // If the declaring class is public, we are done<a name="line.332"></a>
+<span class="sourceLineNo">333</span>        final Class&lt;T&gt; clazz = ctor.getDeclaringClass();<a name="line.333"></a>
+<span class="sourceLineNo">334</span>        if (Modifier.isPublic(clazz.getModifiers())) {<a name="line.334"></a>
+<span class="sourceLineNo">335</span>            return (ctor);<a name="line.335"></a>
+<span class="sourceLineNo">336</span>        }<a name="line.336"></a>
+<span class="sourceLineNo">337</span><a name="line.337"></a>
+<span class="sourceLineNo">338</span>        // what else can we do?<a name="line.338"></a>
+<span class="sourceLineNo">339</span>        return null;<a name="line.339"></a>
+<span class="sourceLineNo">340</span>    }<a name="line.340"></a>
+<span class="sourceLineNo">341</span><a name="line.341"></a>
+<span class="sourceLineNo">342</span>    private static Object[] toArray(final Object arg) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>        Object[] args = null;<a name="line.343"></a>
+<span class="sourceLineNo">344</span>        if (arg != null) {<a name="line.344"></a>
+<span class="sourceLineNo">345</span>            args = new Object[] { arg };<a name="line.345"></a>
+<span class="sourceLineNo">346</span>        }<a name="line.346"></a>
+<span class="sourceLineNo">347</span>        return args;<a name="line.347"></a>
+<span class="sourceLineNo">348</span>    }<a name="line.348"></a>
+<span class="sourceLineNo">349</span><a name="line.349"></a>
+<span class="sourceLineNo">350</span>    // -------------------------------------------------------- Private Methods<a name="line.350"></a>
+<span class="sourceLineNo">351</span>    /**<a name="line.351"></a>
+<span class="sourceLineNo">352</span>     * &lt;p&gt;Find an accessible constructor with compatible parameters.<a name="line.352"></a>
+<span class="sourceLineNo">353</span>     * Compatible parameters mean that every method parameter is assignable from<a name="line.353"></a>
+<span class="sourceLineNo">354</span>     * the given parameters. In other words, it finds constructor that will take<a name="line.354"></a>
+<span class="sourceLineNo">355</span>     * the parameters given.&lt;/p&gt;<a name="line.355"></a>
+<span class="sourceLineNo">356</span>     *<a name="line.356"></a>
+<span class="sourceLineNo">357</span>     * &lt;p&gt;First it checks if there is constructor matching the exact signature.<a name="line.357"></a>
+<span class="sourceLineNo">358</span>     * If no such, all the constructors of the class are tested if their signatures<a name="line.358"></a>
+<span class="sourceLineNo">359</span>     * are assignment compatible with the parameter types.<a name="line.359"></a>
+<span class="sourceLineNo">360</span>     * The first matching constructor is returned.&lt;/p&gt;<a name="line.360"></a>
+<span class="sourceLineNo">361</span>     *<a name="line.361"></a>
+<span class="sourceLineNo">362</span>     * @param &lt;T&gt; the type of the class to be inspected<a name="line.362"></a>
+<span class="sourceLineNo">363</span>     * @param clazz find constructor for this class<a name="line.363"></a>
+<span class="sourceLineNo">364</span>     * @param parameterTypes find method with compatible parameters<a name="line.364"></a>
+<span class="sourceLineNo">365</span>     * @return a valid Constructor object. If there's no matching constructor, returns &lt;code&gt;null&lt;/code&gt;.<a name="line.365"></a>
+<span class="sourceLineNo">366</span>     */<a name="line.366"></a>
+<span class="sourceLineNo">367</span>    private static &lt;T&gt; Constructor&lt;T&gt; getMatchingAccessibleConstructor(<a name="line.367"></a>
+<span class="sourceLineNo">368</span>        final Class&lt;T&gt; clazz,<a name="line.368"></a>
+<span class="sourceLineNo">369</span>        final Class&lt;?&gt;[] parameterTypes) {<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        // see if we can find the method directly<a name="line.370"></a>
+<span class="sourceLineNo">371</span>        // most of the time this works and it's much faster<a name="line.371"></a>
+<span class="sourceLineNo">372</span>        try {<a name="line.372"></a>
+<span class="sourceLineNo">373</span>            final Constructor&lt;T&gt; ctor = clazz.getConstructor(parameterTypes);<a name="line.373"></a>
+<span class="sourceLineNo">374</span>            try {<a name="line.374"></a>
+<span class="sourceLineNo">375</span>                //<a name="line.375"></a>
+<span class="sourceLineNo">376</span>                // XXX Default access superclass workaround<a name="line.376"></a>
+<span class="sourceLineNo">377</span>                //<a name="line.377"></a>
+<span class="sourceLineNo">378</span>                // When a public class has a default access superclass<a name="line.378"></a>
+<span class="sourceLineNo">379</span>                // with public methods, these methods are accessible.<a name="line.379"></a>
+<span class="sourceLineNo">380</span>                // Calling them from compiled code works fine.<a name="line.380"></a>
+<span class="sourceLineNo">381</span>                //<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                // Unfortunately, using reflection to invoke these methods<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                // seems to (wrongly) to prevent access even when the method<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                // modifer is public.<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                //<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                // The following workaround solves the problem but will only<a name="line.386"></a>
+<span class="sourceLineNo">387</span>                // work from sufficiently privilages code.<a name="line.387"></a>
+<span class="sourceLineNo">388</span>                //<a name="line.388"></a>
+<span class="sourceLineNo">389</span>                // Better workarounds would be greatfully accepted.<a name="line.389"></a>
+<span class="sourceLineNo">390</span>                //<a name="line.390"></a>
+<span class="sourceLineNo">391</span>                ctor.setAccessible(true);<a name="line.391"></a>
+<span class="sourceLineNo">392</span>            } catch (final SecurityException se) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>                /* SWALLOW, if workaround fails don't fret. */<a name="line.393"></a>
+<span class="sourceLineNo">394</span>            }<a name="line.394"></a>
+<span class="sourceLineNo">395</span>            return ctor;<a name="line.395"></a>
+<span class="sourceLineNo">396</span><a name="line.396"></a>
+<span class="sourceLineNo">397</span>        } catch (final NoSuchMethodException e) { /* SWALLOW */<a name="line.397"></a>
+<span class="sourceLineNo">398</span>        }<a name="line.398"></a>
+<span class="sourceLineNo">399</span><a name="line.399"></a>
+<span class="sourceLineNo">400</span>        // search through all methods<a name="line.400"></a>
+<span class="sourceLineNo">401</span>        final int paramSize = parameterTypes.length;<a name="line.401"></a>
+<span class="sourceLineNo">402</span>        final Constructor&lt;?&gt;[] ctors = clazz.getConstructors();<a name="line.402"></a>
+<span class="sourceLineNo">403</span>        for (Constructor&lt;?&gt; ctor2 : ctors) {<a name="line.403"></a>
+<span class="sourceLineNo">404</span>            // compare parameters<a name="line.404"></a>
+<span class="sourceLineNo">405</span>            final Class&lt;?&gt;[] ctorParams = ctor2.getParameterTypes();<a name="line.405"></a>
+<span class="sourceLineNo">406</span>            final int ctorParamSize = ctorParams.length;<a name="line.406"></a>
+<span class="sourceLineNo">407</span>            if (ctorParamSize == paramSize) {<a name="line.407"></a>
+<span class="sourceLineNo">408</span>                boolean match = true;<a name="line.408"></a>
+<span class="sourceLineNo">409</span>                for (int n = 0; n &lt; ctorParamSize; n++) {<a name="line.409"></a>
+<span class="sourceLineNo">410</span>                    if (!MethodUtils<a name="line.410"></a>
+<span class="sourceLineNo">411</span>                        .isAssignmentCompatible(<a name="line.411"></a>
+<span class="sourceLineNo">412</span>                            ctorParams[n],<a name="line.412"></a>
+<span class="sourceLineNo">413</span>                            parameterTypes[n])) {<a name="line.413"></a>
+<span class="sourceLineNo">414</span>                        match = false;<a name="line.414"></a>
+<span class="sourceLineNo">415</span>                        break;<a name="line.415"></a>
+<span class="sourceLineNo">416</span>                    }<a name="line.416"></a>
+<span class="sourceLineNo">417</span>                }<a name="line.417"></a>
+<span class="sourceLineNo">418</span><a name="line.418"></a>
+<span class="sourceLineNo">419</span>                if (match) {<a name="line.419"></a>
+<span class="sourceLineNo">420</span>                    // get accessible version of method<a name="line.420"></a>
+<span class="sourceLineNo">421</span>                    final Constructor&lt;?&gt; ctor = getAccessibleConstructor(ctor2);<a name="line.421"></a>
+<span class="sourceLineNo">422</span>                    if (ctor != null) {<a name="line.422"></a>
+<span class="sourceLineNo">423</span>                        try {<a name="line.423"></a>
+<span class="sourceLineNo">424</span>                            ctor.setAccessible(true);<a name="line.424"></a>
+<span class="sourceLineNo">425</span>                        } catch (final SecurityException se) {<a name="line.425"></a>
+<span class="sourceLineNo">426</span>                            /* Swallow SecurityException<a name="line.426"></a>
+<span class="sourceLineNo">427</span>                             * TODO: Why?<a name="line.427"></a>
+<span class="sourceLineNo">428</span>                             */<a name="line.428"></a>
+<span class="sourceLineNo">429</span>                        }<a name="line.429"></a>
+<span class="sourceLineNo">430</span>                        @SuppressWarnings("unchecked")<a name="line.430"></a>
+<span class="sourceLineNo">431</span>                        final<a name="line.431"></a>
+<span class="sourceLineNo">432</span>                        // Class.getConstructors() actually returns constructors<a name="line.432"></a>
+<span class="sourceLineNo">433</span>                        // of type T, so it is safe to cast.<a name="line.433"></a>
+<span class="sourceLineNo">434</span>                        Constructor&lt;T&gt; typedCtor = (Constructor&lt;T&gt;) ctor;<a name="line.434"></a>
+<span class="sourceLineNo">435</span>                        return typedCtor;<a name="line.435"></a>
+<span class="sourceLineNo">436</span>                    }<a name="line.436"></a>
+<span class="sourceLineNo">437</span>                }<a name="line.437"></a>
+<span class="sourceLineNo">438</span>            }<a name="line.438"></a>
+<span class="sourceLineNo">439</span>        }<a name="line.439"></a>
+<span class="sourceLineNo">440</span><a name="line.440"></a>
+<span class="sourceLineNo">441</span>        return null;<a name="line.441"></a>
+<span class="sourceLineNo">442</span>    }<a name="line.442"></a>
+<span class="sourceLineNo">443</span><a name="line.443"></a>
+<span class="sourceLineNo">444</span>}<a name="line.444"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
