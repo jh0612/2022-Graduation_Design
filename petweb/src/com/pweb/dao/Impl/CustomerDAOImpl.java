@@ -51,7 +51,7 @@ public class CustomerDAOImpl extends BaseDAO<Customer> implements CustomerDAO {
     public Customer getCustomerById(Connection conn, Integer custid) {
         String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer where custid = ?";
 //        Customer customer = getInstance(conn, sql,custid);
-        return getInstance(conn, sql,custid);
+        return getInstance(sql,custid);
     }
 
     @Override

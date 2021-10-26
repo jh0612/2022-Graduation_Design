@@ -4,6 +4,8 @@ import com.pweb.utils.JDBCUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -21,8 +23,8 @@ import java.util.List;
  */
 public abstract class BaseDAO<T> {
     //使用DButils操作数据库
-    private QueryRunner queryRunner = new QueryRunner();
-    private Class<T> clazz = null;
+    private final QueryRunner queryRunner = new QueryRunner();
+    private final Class<T> clazz;
     {
         //获取当前BaseDAO的子类继承的父类中的泛型
         Type genericSuperclass = this.getClass().getGenericSuperclass();
@@ -34,11 +36,12 @@ public abstract class BaseDAO<T> {
     }
 
     // 通用的查询操作，用于返回数据表中的一条记录（version 2.0：考虑上事务）
-    public T getInstance(Connection conn, String sql, Object... args) {
+    public T getInstance(String sql, Object... args) {
+        Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-
+            conn = JDBCUtils.getConnectionDruid();
             ps = conn.prepareStatement(sql);
             for (int i = 0; i < args.length; i++) {
                 ps.setObject(i + 1, args[i]);
@@ -51,7 +54,7 @@ public abstract class BaseDAO<T> {
             int columnCount = rsmd.getColumnCount();
 
             if (rs.next()) {
-                T t = clazz.newInstance();
+                T t = clazz.getDeclaredConstructor().newInstance();
                 // 处理结果集一行数据中的每一个列
                 for (int i = 0; i < columnCount; i++) {
                     // 获取列值
@@ -71,7 +74,7 @@ public abstract class BaseDAO<T> {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            JDBCUtils.close(null, ps, rs);
+            JDBCUtils.close(conn, ps, rs);
 
         }
 
@@ -79,8 +82,8 @@ public abstract class BaseDAO<T> {
     }
     /**
      * 查询特殊值的方法
-     * @param conn
-     * @param sql
+     * @param conn 连接
+     * @param sql sql
      * @param args 可变型参
      * @return E
      * @author jh
@@ -113,7 +116,7 @@ public abstract class BaseDAO<T> {
 
     /**
      * 查多行数据，不能处理事务
-     * @param conn
+     * @param conn 连接
      * @param sql sql语句
      * @param args 可变形惨
      * @return java.util.List<T>
@@ -134,9 +137,9 @@ public abstract class BaseDAO<T> {
             // 通过ResultSetMetaData获取结果集中的列数
             int columnCount = rsmd.getColumnCount();
             // 创建集合对象
-            ArrayList<T> list = new ArrayList<T>();
+            ArrayList<T> list = new ArrayList<>();
             while (rs.next()) {
-                T t = clazz.newInstance();
+                T t = clazz.getDeclaredConstructor().newInstance();
                 // 处理结果集一行数据中的每一个列:给t对象指定的属性赋值
                 for (int i = 0; i < columnCount; i++) {
                     // 获取列值
@@ -222,18 +225,18 @@ public abstract class BaseDAO<T> {
      * @author jh
      * @Date:  2021/10/25  19:29
      */
-     public <T> T queryForOne(Class<T> clazz,String sql,Object...args){
-            Connection conn = null;
-            try {
-                conn = JDBCUtils.getConnectionDruid();
-                return queryRunner.query(conn,sql,new BeanHandler<T>(clazz),args);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                JDBCUtils.close(conn,null,null);
-            }
-            return null;
-     }
+    public <T> T queryForOne(Class<T> clazz,String sql,Object...args){
+        Connection conn = null;
+        try {
+            conn = JDBCUtils.getConnectionDruid();
+            return queryRunner.query(conn,sql,new BeanHandler<>(clazz),args);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBCUtils.close(conn,null,null);
+        }
+        return null;
+    }
 
     /**
      * 增删改
@@ -270,4 +273,42 @@ public abstract class BaseDAO<T> {
         }
     }
 
+
+    /**
+     * 增删改(带图片)
+     * @param sql sql语句
+     * @param args 可变型参
+     * @author jh
+     * @Date:  2021/10/25  19:17
+     */
+    public static void updateForPets(String sql,Object...args){
+        Connection conn = null;
+        PreparedStatement ps = null;
+        FileInputStream fis = null;
+        try {
+            conn = JDBCUtils.getConnectionDruid();
+            conn.setAutoCommit(false);//start
+            ps = conn.prepareStatement(sql);
+            fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
+            //填充？
+            for (int i = 0; i < args.length; i++) {
+                ps.setObject(i+1,args[i]);
+            }
+
+            int update = ps.executeUpdate();//改动几条for server
+            System.out.println(update);//可不要
+            conn.commit();
+        } catch (SQLException | FileNotFoundException e) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            JDBCUtils.close(conn,ps,null);
+        }
+    }
 }

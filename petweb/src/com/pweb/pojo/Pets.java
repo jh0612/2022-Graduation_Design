@@ -1,5 +1,7 @@
 package com.pweb.pojo;
 
+import java.io.FileInputStream;
+
 /**
  * pets--->対応
  * @author jhao Email:jh0612@icloud.com
@@ -13,6 +15,32 @@ public class Pets {
     private String species;//種類
     private Integer amount;//数
     private String instruction;//説明
+    //图片这样应该只能放一张需要给文件地址，配置文件使用？？
+    private FileInputStream fis;
+
+    public Pets(Integer id, String petsname, String species, Integer amount, String instruction) {
+        this.id = id;
+        this.petsname = petsname;
+        this.species = species;
+        this.amount = amount;
+        this.instruction = instruction;
+    }
+
+    public String getPetsname() {
+        return petsname;
+    }
+
+    public void setPetsname(String petsname) {
+        this.petsname = petsname;
+    }
+
+    public FileInputStream getFis() {
+        return fis;
+    }
+
+    public void setFis(FileInputStream fis) {
+        this.fis = fis;
+    }
 
     @Override
     public String toString() {
@@ -22,18 +50,20 @@ public class Pets {
                 ", species='" + species + '\'' +
                 ", amount=" + amount +
                 ", instruction='" + instruction + '\'' +
+                ", fis=" + fis +
                 '}';
     }
 
     public Pets() {
     }
 
-    public Pets(Integer id, String petsname, String species, Integer amount, String instruction) {
+    public Pets(Integer id, String petsname, String species, Integer amount, String instruction, FileInputStream fis) {
         this.id = id;
         this.petsname = petsname;
         this.species = species;
         this.amount = amount;
         this.instruction = instruction;
+        this.fis = fis;
     }
 
     public Integer getId() {
