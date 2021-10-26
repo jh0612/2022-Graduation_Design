@@ -1,0 +1,47 @@
+@charset "utf-8";
+/*
+此为文字样式css，目前此样式汉字的兼容性不太好
+主要用于平片假名，标题等
+所以汉字多的时候使用---font_moji.css(比如说明，长的文字，表单)
+*/
+@font-face {
+    font-family: 'Pomeranian-Regular';
+    /*path*/
+    src: url('/static/font/Pomeranian-Regular.ttf') format('opentype'),
+    url('/static/font/Pomeranian-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+h1.neuesDemo {/*h1标签并且class为neuesDemo的都会应用上*/
+    font-family: 'Pomeranian-Regular';/*指定字体也就是上方字体名*/
+    font-size: larger;/*指定字体大小*/
+    color: darkgray;/*指定字体颜色*/
+}
+h2.neuesDemo {
+    font-family: 'Pomeranian-Regular';
+    /*font-size: inherit;*/
+    color: #ffaa33;
+}
+div.neuesDemo {
+    font-family: 'Pomeranian-Regular';
+    font-size: inherit;
+    color: #ffaa33;
+}
+table.neuesDemo {
+    font-family: 'Pomeranian-Regular';
+    font-size: inherit;
+    color: #ffaa33;
+}
+input.neuesDemo{
+    font-family: 'Pomeranian-Regular';
+    font-size: inherit;
+    color: #ffaa33;
+}
+button.neuesDemo{
+    outline: none;
+    box-shadow: none;
+}
+a.under_line{
+    text-decoration: none;/*去下划线*/
+    color: #ffaa33;/*设置为背景颜色，也就是无色*/
+}

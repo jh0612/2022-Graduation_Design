@@ -1,0 +1,17 @@
+@charset "utf-8";
+/*
+此为文字样式css文件，专为长文，表单等使用
+ */
+@font-face {
+    font-family: 'komorebi-gothic';
+    /*path*/
+    src: url('/static/font/komorebi-gothic.ttf') format('opentype'),
+    url('/static/font/komorebi-gothic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+p.font_instruction{
+    font-family: 'komorebi-gothic';/*指定字体也就是上方字体名*/
+    font-size: larger;/*指定字体大小*/
+    color: #ffaa33;/*指定字体颜色*/
+}
