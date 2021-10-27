@@ -21,6 +21,16 @@
  
 ### 前段（框架）              
     * jquery-easyui-1.10.0 
+    
+### 页面说明（小组用-->不喜勿喷）
+    * 新增两种日语字体(html开头没页必备无需修改)
+      - Pomeranian-Regular-->标题等醒目使用(自己判断で構いません)
+      - komorebi-gothic-->说明长文汉字多使用
+    * 背景图片需要更换(俺艺术细胞なし、ごめん)
+    * 做页面时使用html文件即可
+    * html文件与css样式分开各一个文件link进来即可
+    * 皆んなさん！多写注释哦~~
+    
 --- 
 ### 下载地址(Download)
 [https://www.jeasyui.com/](https://www.jeasyui.com/)    
