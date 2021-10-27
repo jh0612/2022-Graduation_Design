@@ -1,1 +1,61 @@
 @charset "utf-8";
+html {
+    color: #333;
+    background: #fff;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-rendering: optimizelegibility;
+}
+/*主面板样式*/
+#Container {
+    content: ' ';
+    width: 100%;
+    margin: 0ex auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /*background-size: cover;*/
+    position: fixed;
+    overflow: auto;/*可以上下滚轮滑动，并且总高度不能大于100%*/
+}
+/*导航栏*/
+#navigation {
+    height: 5%;
+    position: relative;
+}
+/*顶部面板样式*/
+#header {
+    height: 26em;
+    /*border: 1ex #F00 solid;*/
+    position: relative;
+}
+/*中间部分样式*/
+#main {
+    width: 100%;
+    border: 1ex #F00 solid;
+    /*position: relative;*/
+    display: flex;
+}
+/*中间细分*/
+#left,#right{
+    width: 17%;
+    border: 1ex #ffaa33 solid;
+    margin: 1ex;
+    float: left;
+    /*position: fixed; 用于固定导航栏*/
+}
+#center {
+    width: 65%;
+    /*height: 95%;*/
+    border: 1ex #ffaa33 solid;
+    margin: 1ex;
+    float: left;
+}
+/*底部样式*/
+#footer {
+    width: 100%;
+    height: 13%;
+    border: 1ex #F00 solid;
+    background-color: #747267;
+}
