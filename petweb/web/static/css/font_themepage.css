@@ -9,39 +9,28 @@
     /*path*/
     src: url('/static/font/Pomeranian-Regular.ttf') format('opentype'),
     url('/static/font/Pomeranian-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+    /*font-weight: normal;*/
+    /*font-style: normal;*/
 }
+/*以下两个为事例*/
 h1.neuesDemo {/*h1标签并且class为neuesDemo的都会应用上*/
-    font-family: 'Pomeranian-Regular';/*指定字体也就是上方字体名*/
-    font-size: larger;/*指定字体大小*/
+    font-family: 'Pomeranian-Regular', serif;/*指定字体也就是上方字体名*/
+    font-size: 10vm;/*指定字体大小*/
     color: darkgray;/*指定字体颜色*/
 }
-h2.neuesDemo {
-    font-family: 'Pomeranian-Regular';
-    /*font-size: inherit;*/
-    color: #ffaa33;
+#navigation.under_line{
+    /*text-decoration: none;!*去下划线*!*/
+    color: #000000;/*设置为背景颜色，也就是无色*/
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 1vw;
+    align-content: flex-end;
 }
-div.neuesDemo {
-    font-family: 'Pomeranian-Regular';
-    font-size: inherit;
-    color: #ffaa33;
+/*以上两个为事例*/
+#menu{
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 2.5vw;
 }
-table.neuesDemo {
-    font-family: 'Pomeranian-Regular';
-    font-size: inherit;
-    color: #ffaa33;
-}
-input.neuesDemo{
-    font-family: 'Pomeranian-Regular';
-    font-size: inherit;
-    color: #ffaa33;
-}
-button.neuesDemo{
-    outline: none;
-    box-shadow: none;
-}
-a.under_line{
-    text-decoration: none;/*去下划线*/
-    color: #ffaa33;/*设置为背景颜色，也就是无色*/
+#header_under {
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 30px;
 }

@@ -6,11 +6,89 @@ html {
     -ms-text-size-adjust: 100%;
     text-rendering: optimizelegibility;
 }
+.left{ width:30%; float:left}
+.right{ width:70%; float:right;}
+body {
+    margin: 0;
+}
+h1{
+    display: block;
+    font-size: 2.5em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    font-weight: bold;
+    padding-top:0;
+    padding-bottom:0;
+}
+h1.header_total{
+    top: 0;
+    margin: 0;
+}
+
+/*导航栏*/
+#menu {
+    width: 100%;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    width: 100%;
+    flex: auto;
+
+    /*position: fixed;*/
+}
+
+li {
+    float: left;
+    /*display:inline-block;*/
+    white-space:nowrap;
+    /*border-right: 1px solid #bbb;*/
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 10px;
+    text-decoration: none;
+    margin: 5px auto;
+
+}
+li img {
+    /*weight: auto;*/
+    /*margin: 1vm auto;!*9px*!*/
+    /*display: inline-block;*/
+    vertical-align:middle ;
+    max-height: 5em;
+    width: 2em;
+    height: 2em;
+    margin-top: 10px;
+    margin-left: 0.1em;
+
+}
+
+/*鼠标移动到选项上修改背景颜色 */
+li a:hover {
+    background-color: #111;
+
+}
+
+/*导航栏*/
+@media screen and (min-width: 800px) {
+    #container {
+        margin: 1em 2em;
+    }
+}
 /*主面板样式*/
 #Container {
     content: ' ';
     width: 100%;
-    margin: 0ex auto;
+    margin: 0 auto;
     top: 0;
     right: 0;
     bottom: 0;
@@ -18,12 +96,16 @@ html {
     /*background-size: cover;*/
     position: fixed;
     overflow: auto;/*可以上下滚轮滑动，并且总高度不能大于100%*/
+
 }
 /*导航栏*/
 #navigation {
-    height: 5%;
+    height: 4vw;
     position: relative;
 }
+div.clear{clear:both}
+
+
 /*顶部面板样式*/
 #header {
     height: 26em;
@@ -34,10 +116,50 @@ html {
 #main {
     width: 100%;
     border: 1ex #F00 solid;
-    /*position: relative;*/
+    position: relative;
     display: flex;
 }
-/*中间细分*/
+/*中间细分(上)*/
+@media screen and (max-width: 834px) {
+    #header_under {
+        float: none;
+        margin: auto;
+        text-align: left;
+    }
+}
+#header_under{
+}
+
+#header_under_left,#header_under_right{
+    width: 48%;
+    /*border: 1px #ffaa33 solid;*/
+    margin: 0;/*margin: auto适合列表浏览下方center也改一下就好如left*/
+    background-size: auto;
+    height:150px;
+    line-height:70px;
+    float: left;
+    text-align: center;
+}
+.header_underImg img{
+    position: relative;
+    z-index: 1;
+    background-size: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.header_underImg p {
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    top: 0;
+    margin: 0;
+    height: 1em;
+}
+
+/*中间细分(下)*/
 #left,#right{
     width: 17%;
     border: 1ex #ffaa33 solid;
@@ -46,8 +168,7 @@ html {
     /*position: fixed; 用于固定导航栏*/
 }
 #center {
-    width: 65%;
-    /*height: 95%;*/
+    width: 65vw;
     border: 1ex #ffaa33 solid;
     margin: 1ex;
     float: left;
@@ -55,7 +176,6 @@ html {
 /*底部样式*/
 #footer {
     width: 100%;
-    height: 13%;
-    border: 1ex #F00 solid;
+    height: 10vw;
     background-color: #747267;
 }

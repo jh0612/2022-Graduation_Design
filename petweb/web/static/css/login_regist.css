@@ -1,0 +1,47 @@
+@charset "utf-8";
+.input_control {
+    width: 360px;
+    margin: 20px auto;
+}
+.input_control img{
+    width: 360px;
+    height: 70px;
+    margin: 20px auto;
+    text-align:center;
+}
+input[type="text"],[type="password"],[type="date"],#btn1,#btn2{
+    box-sizing: border-box;
+    text-align:center;
+    font-size:0.85em;
+    height:2.2em;
+    border-radius:40px;
+    border:1px solid #c8cccf;
+    color: #000000;
+    -web-kit-appearance:none;
+    -moz-appearance: none;
+    display:block;
+    outline:0;
+    padding:0 1em;
+    text-decoration:none;
+    width:100%;
+}
+input[type="text"]:focus{
+    border:1px solid #ff7496;
+}
+::-moz-placeholder{
+    color: #6a6f77;
+}
+::-moz-placeholder{
+    color: #6a6f77;
+}
+input::-webkit-input-placeholder{
+    color: #6a6f77;
+}
+/*密码框样式*/
+input[type="radio"] {
+    /*vertical-align: middle;*/
+    /*margin-top: -2px;*/
+    width:100%;
+}
+
+
