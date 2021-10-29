@@ -31,6 +31,14 @@
     * html文件与css样式分开各一个文件link进来即可
     * 皆んなさん！多写注释哦~~
     
+### 页面分工(11月09日までに)
+    *SWJ 美术设计(图片，文字类)
+    *ZT 主页页面(index.jsp)
+    *WZR 登录注册页面(login.jsp)
+    *ZBJ 商品展示界面(showcase.jsp)
+    *JH 鸣谢页面及最后统合(thanks.jsp)
+    *SK 发表等
+    
 --- 
 ### 下载地址(Download)
 [https://www.jeasyui.com/](https://www.jeasyui.com/)    
