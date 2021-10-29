@@ -11,7 +11,13 @@
     font-style: normal;
 }
 p.font_instruction{
-    font-family: 'komorebi-gothic';/*指定字体也就是上方字体名*/
+    font-family: 'komorebi-gothic', serif;/*指定字体也就是上方字体名*/
     font-size: larger;/*指定字体大小*/
     color: #ffaa33;/*指定字体颜色*/
+}
+
+.title {
+    font-family: 'komorebi-gothic', serif;
+    font-size: 2.5em;
+    margin: 1px auto;
 }

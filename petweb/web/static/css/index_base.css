@@ -31,35 +31,39 @@ h1.header_total{
 #menu {
     width: 100%;
 }
-ul {
+ul.menu_li {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 1px;
     overflow: hidden;
     background-color: #333;
     width: 100%;
-    flex: auto;
+    height: 2em;
+    /*flex: auto;*/
 
     /*position: fixed;*/
 }
 
-li {
+li.menu_li {
     float: left;
     /*display:inline-block;*/
     white-space:nowrap;
     /*border-right: 1px solid #bbb;*/
+    margin-top: 2px;
+    margin-bottom: 4px;
+    padding: 10px 2px;
+
 }
 
-li a {
+li.menu_li a {
     display: block;
     color: white;
     text-align: center;
-    padding: 14px 10px;
+    padding: 5px 16px;
     text-decoration: none;
-    margin: 5px auto;
-
+    margin: -8px auto;
 }
-li img {
+li.menu_li img {
     /*weight: auto;*/
     /*margin: 1vm auto;!*9px*!*/
     /*display: inline-block;*/
@@ -67,13 +71,13 @@ li img {
     max-height: 5em;
     width: 2em;
     height: 2em;
-    margin-top: 10px;
+    margin-top: -5px;
     margin-left: 0.1em;
 
 }
 
 /*鼠标移动到选项上修改背景颜色 */
-li a:hover {
+li.menu_li a:hover {
     background-color: #111;
 
 }
@@ -176,6 +180,6 @@ div.clear{clear:both}
 /*底部样式*/
 #footer {
     width: 100%;
-    height: 10vw;
+    height: 10%;
     background-color: #747267;
 }

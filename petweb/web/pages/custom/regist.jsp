@@ -47,12 +47,12 @@
 <body>
 <div id="Container">
     <%--导航栏--%>
-    <ul id="menu" >
-        <li><img src="../../static/img/background_img/logo.jpg" ></li>
-        <li><a href="../../index.jsp">ホームページ</a></li>
-        <li><a href="#aboutwe">チームメンバ</a></li>
-        <li style="float:right"><a href="../../pages/custom/regist.jsp">会員登録</a></li>
-        <li style="float:right"><a href="../../pages/custom/login.jsp">会員ログイン</a></li>
+    <ul id="menu"  class="menu_li">
+        <li class="menu_li"><img src="../../static/img/background_img/logo.jpg" style="margin-top: -14px"></li>
+        <li class="menu_li"><a href="../../index.jsp">ホームページ</a></li>
+        <li class="menu_li"><a href="../../pages/group/group.jsp">チームメンバ</a></li>
+        <li class="menu_li" style="float:right"><a href="../../pages/custom/regist.jsp">会員登録</a></li>
+        <li class="menu_li" style="float:right"><a href="../../pages/custom/login.jsp">会員ログイン</a></li>
     </ul>
 
     <%-- 顶部header --%>

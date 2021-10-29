@@ -34,3 +34,11 @@ h1.neuesDemo {/*h1标签并且class为neuesDemo的都会应用上*/
     font-family: 'Pomeranian-Regular', serif;
     font-size: 30px;
 }
+#member_title {
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 7vw;
+}
+.post {
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 1.5em;
+}

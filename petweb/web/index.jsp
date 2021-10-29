@@ -46,14 +46,12 @@
   <body>
   <div id="Container">
 <%--导航栏--%>
-    <ul id="menu" >
-        <li><img src="static/img/background_img/logo.jpg"></a></li>
-        <li><a href="index.jsp">ホームページ</a></li>
-        <li><a href="#aboutwe">チームメンバ</a></li>
-
-        <li style="float:right"><a href="pages/custom/regist.jsp">会員登録</a></li>
-
-        <li style="float:right"><a href="pages/custom/login.jsp">会員ログイン</a></li>
+    <ul id="menu" class="menu_li">
+        <li class="menu_li"><img src="static/img/background_img/logo.jpg" style="margin-top: -14px"></li>
+        <li class="menu_li"><a href="index.jsp">ホームページ</a></li>
+        <li class="menu_li"><a href="pages/group/group.jsp">チームメンバ</a></li>
+        <li class="menu_li" style="float:right"><a href="pages/custom/regist.jsp">会員登録</a></li>
+        <li class="menu_li" style="float:right"><a href="pages/custom/login.jsp">会員ログイン</a></li>
         <div class="clear"></div>
     </ul>
 
@@ -69,7 +67,7 @@
 
         <div id="header_under_right" class="header_underImg">
 <%-- 单纯黑色竖线 --%>
-            <li id="Layer1" style=" list-style-type: none; width:3px; height:170px; z-index:1; background-color: #8b8b8b;layer-background-color: #000000; border: 1px none #000000; right: 143px; top: 263px"></li>
+            <li class="menu_li" id="Layer1" style=" list-style-type: none; width:2px; height:170px; z-index:1; background-color: #8b8b8b; border: 1px none #000000; right: 143px; top: 263px"></li>
             <a href="#catMall"><img src="static/img/cat/index_cat.png" width="200em" href="#view_cat"></a>
             <p>ネコちゃん</p>
         </div>
