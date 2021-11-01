@@ -225,11 +225,11 @@ public abstract class BaseDAO<T> {
      * @author jh
      * @Date:  2021/10/25  19:29
      */
-    public <T> T queryForOne(Class<T> clazz,String sql,Object...args){
+    public <T> T queryForOne(Class<T> clazz,String sql,Object...args) {
         Connection conn = null;
         try {
             conn = JDBCUtils.getConnectionDruid();
-            return queryRunner.query(conn,sql,new BeanHandler<>(clazz),args);
+            return queryRunner.query(conn,sql,new BeanHandler<T>(clazz),args);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

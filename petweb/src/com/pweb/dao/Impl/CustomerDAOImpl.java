@@ -28,9 +28,9 @@ public class CustomerDAOImpl extends BaseDAO<Customer> implements CustomerDAO {
     }
 
     @Override
-    public void insert(Connection conn, Customer customer) {
-        String sql = "insert into customer(custname,custpassword,custsex,custemail,custaddress,custbirth)values(?,?,?,?,?,?)";
-        update(sql,customer.getcustname(),customer.getcustpassword(),customer.getcustsex(),
+    public void insert( Customer customer) {
+        String sql = "insert into customer(custid,custname,custpassword,custsex,custemail,custaddress,custbirth)values(?,?,?,?,?,?,?)";
+        update(sql,customer.getcustid(),customer.getcustname(),customer.getcustpassword(),customer.getcustsex(),
                 customer.getcustemail(),customer.getcustaddress(),customer.getcustbirth());
     }
 

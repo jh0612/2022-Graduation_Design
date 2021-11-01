@@ -7,7 +7,6 @@ import com.pweb.utils.JDBCUtils;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -42,9 +41,8 @@ class CustomerDAOTest {
         Connection conn = null;
         try {
             conn = JDBCUtils.getConnectionDruid();
-            cd.insert(conn,new Customer(null,"simokawa","123456","1","simokawa@gmail.com","東京都中央区1-1-1",new Date()));
-        } catch (SQLException e) {
-            e.printStackTrace();
+            cd.insert(new Customer(null,"simokawa","123456"
+                    ,"1","simokawa@gmail.com","東京都中央区1-1-1",new Date()));//"1996-09-23"
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -56,8 +54,6 @@ class CustomerDAOTest {
         try {
             conn = JDBCUtils.getConnectionDruid();
             cd.deleteById(conn, 2);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -68,9 +64,8 @@ class CustomerDAOTest {
         Connection conn = null;
         try {
             conn = JDBCUtils.getConnectionDruid();
-            cd.updateById(conn, new Customer(2,"simokawa","123456","1","simokawa@gmail.com","東京都中央区1-2-1",new Date()));
-        } catch (SQLException e) {
-            e.printStackTrace();
+            cd.updateById(conn, new Customer(2,"simokawa","123456","1"
+                    ,"simokawa@gmail.com","東京都中央区1-2-1",new Date()));//"1996-09-23"
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -83,8 +78,6 @@ class CustomerDAOTest {
             conn = JDBCUtils.getConnectionDruid();
             Customer customer = cd.getCustomerById(conn, 2);
             System.out.println(customer);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -97,8 +90,6 @@ class CustomerDAOTest {
             conn = JDBCUtils.getConnectionDruid();
             List<Customer> customerList = cd.getAll(conn, 3);
             customerList.forEach(System.out::println);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -111,8 +102,6 @@ class CustomerDAOTest {
             conn = JDBCUtils.getConnectionDruid();
             Long count = cd.getCount(conn);
             System.out.println(count);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -125,8 +114,6 @@ class CustomerDAOTest {
             conn = JDBCUtils.getConnectionDruid();
             Date mixBirth = cd.getMixBirth(conn);
             System.out.println("最小的生日为" + mixBirth);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }

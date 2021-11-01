@@ -1,8 +1,8 @@
 package com.pweb.utils;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
@@ -15,13 +15,14 @@ import java.util.Properties;
  * petweb
  */
 public abstract class JDBCUtils {
-    private static DataSource source;
+    private static DruidDataSource dataSource;
     static {
         try {
             Properties properties = new Properties();
-            InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("petdb.properties");
+            InputStream resourceAsStream = JDBCUtils.class.getClassLoader().getResourceAsStream("petdb.properties");
+//            InputStream resourceAsStream = JdbcUtils.class.getResourceAsStream("petdb.properties");
             properties.load(resourceAsStream);
-            source = DruidDataSourceFactory.createDataSource(properties);
+            dataSource = (DruidDataSource)DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -33,8 +34,15 @@ public abstract class JDBCUtils {
      * @author jh
      * @Date:  2021/10/25  18:54
      */
-    public static Connection getConnectionDruid() throws SQLException {
-        return source.getConnection();
+    // throws SQLException去掉了
+    public static Connection getConnectionDruid() {
+        Connection conn = null;
+        try {
+            conn = dataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return conn;
     }
 
     /**

@@ -42,3 +42,22 @@ h1.neuesDemo {/*h1标签并且class为neuesDemo的都会应用上*/
     font-family: 'Pomeranian-Regular', serif;
     font-size: 1.5em;
 }
+/*注册登录取消按钮*/
+#btn1,#btn2{
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 1.5em;
+}
+/*单选框*/
+.sex_set{
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 1.2em;
+}
+/*错误信息文字样式*/
+.errorMsg {
+    font-family: 'Pomeranian-Regular', serif;
+    font-size: 3.5vw;
+    bottom: -3vw;
+    position:relative;
+    text-align:center;
+    display:block;
+}

@@ -18,18 +18,7 @@ public class Customer {
     private String custaddress;//顧客住所
     private Date custbirth;//顧客誕生日
 
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "custid=" + custid +
-                ", custname='" + custname + '\'' +
-                ", custpassword='" + custpassword + '\'' +
-                ", custsex=" + custsex +
-                ", custemail='" + custemail + '\'' +
-                ", custaddress='" + custaddress + '\'' +
-                ", custbirth=" + custbirth +
-                '}';
-    }
+
 
     public Customer() {
     }
@@ -48,7 +37,7 @@ public class Customer {
         return custid;
     }
 
-    public void setcustid(Integer custid) {
+    public void setCustid(Integer custid) {
         this.custid = custid;
     }
 
@@ -56,7 +45,7 @@ public class Customer {
         return custname;
     }
 
-    public void setcustname(String custname) {
+    public void setCustname(String custname) {
         this.custname = custname;
     }
 
@@ -64,7 +53,7 @@ public class Customer {
         return custpassword;
     }
 
-    public void setcustpassword(String custpassword) {
+    public void setCustpassword(String custpassword) {
         this.custpassword = custpassword;
     }
 
@@ -72,7 +61,7 @@ public class Customer {
         return custsex;
     }
 
-    public void setcustsex(String custsex) {
+    public void setCustsex(String custsex) {
         this.custsex = custsex;
     }
 
@@ -80,7 +69,7 @@ public class Customer {
         return custemail;
     }
 
-    public void setcustemail(String custemail) {
+    public void setCustemail(String custemail) {
         this.custemail = custemail;
     }
 
@@ -99,5 +88,16 @@ public class Customer {
     public void setcustbirth(Date custbirth) {
         this.custbirth = custbirth;
     }
-
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "custid=" + custid +
+                ", custname='" + custname + '\'' +
+                ", custpassword='" + custpassword + '\'' +
+                ", custsex=" + custsex +
+                ", custemail='" + custemail + '\'' +
+                ", custaddress='" + custaddress + '\'' +
+                ", custbirth=" + custbirth +
+                '}';
+    }
 }

@@ -37,12 +37,11 @@ public interface CustomerDAO {
 
     /**
     * 需求3---将customer对象添加进数据库中,注册用
-    * @param conn 连接
     * @param customer 用户对象
     * @author jh
     * @Date:  2021/10/25  20:38
     */
-    void insert(Connection conn, Customer customer);
+    void insert(Customer customer);
 
     /**
     * 指定id删除数据

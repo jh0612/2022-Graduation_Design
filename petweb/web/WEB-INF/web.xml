@@ -3,4 +3,32 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
+    <servlet>
+        <servlet-name>CustomerServlet</servlet-name>
+        <servlet-class>com.pweb.web.CustomerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerServlet</servlet-name>
+        <url-pattern>/customerServlet</url-pattern>
+    </servlet-mapping>
+<!--&lt;!&ndash;Regist for Customer&ndash;&gt;-->
+<!--    <servlet>-->
+<!--        <servlet-name>RegistCustServlet</servlet-name>-->
+<!--        <servlet-class>com.pweb.web.RegistCustServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>RegistCustServlet</servlet-name>-->
+<!--        <url-pattern>/registCustServlet</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--&lt;!&ndash;Login for Customer&ndash;&gt;-->
+<!--    <servlet>-->
+<!--        <servlet-name>LoginCustServlet</servlet-name>-->
+<!--        <servlet-class>com.pweb.web.LoginCustServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>LoginCustServlet</servlet-name>-->
+<!--        <url-pattern>/loginCustServlet</url-pattern>-->
+<!--    </servlet-mapping>-->
+<!--Regist and Login for Customer -->
+
 </web-app>

@@ -42,9 +42,7 @@ class CompanyDAOImplTest {
         Connection conn = null;
         try {
             conn = JDBCUtils.getConnectionDruid();
-            cd.insert(conn,new Company(null,"daimaru","admin","大丸貨店","daimaru@gmail.com","大丸次郎","新宿御苑1-3-33"));
-        } catch (SQLException e) {
-            e.printStackTrace();
+            cd.insert(conn,new Company(null,"daimaru1","admin","大丸貨店","daimaru@gmail.com","大丸次郎","新宿御苑1-3-33"));
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -56,8 +54,6 @@ class CompanyDAOImplTest {
         try {
             conn = JDBCUtils.getConnectionDruid();
             cd.deleteById(conn, 2);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -69,8 +65,6 @@ class CompanyDAOImplTest {
         try {
             conn = JDBCUtils.getConnectionDruid();
             cd.updateById(conn,new Company(2,"daimaru","admin","大丸貨店","daimaru@gmail.com","大丸次郎","新宿御苑4-3-33"));
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -83,8 +77,6 @@ class CompanyDAOImplTest {
             conn = JDBCUtils.getConnectionDruid();
             Company company = cd.getCompanyById(conn, 2);
             System.out.println(company);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -97,8 +89,6 @@ class CompanyDAOImplTest {
             conn = JDBCUtils.getConnectionDruid();
             List<Company> companyList = cd.getAll(conn, 3);
             companyList.forEach(System.out::println);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -111,8 +101,6 @@ class CompanyDAOImplTest {
             conn = JDBCUtils.getConnectionDruid();
             Long count = cd.getCount(conn);
             System.out.println(count);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }

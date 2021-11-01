@@ -8,8 +8,23 @@ html {
 }
 .left{ width:30%; float:left}
 .right{ width:70%; float:right;}
+.header {
+    /*下方注意要放在一个目录下，要不无法解析*/
+    width: 100%;
+    background: url("../../static/img/background_img/background_head.jpg") no-repeat 0;
+    background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+}
+/*下方写成body:before会覆盖下方文字等*/
 body {
     margin: 0;
+    content: ' ';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
 }
 h1{
     display: block;
@@ -171,6 +186,37 @@ div.clear{clear:both}
     float: left;
     /*position: fixed; 用于固定导航栏*/
 }
+/*login用*/
+#center>#center_up {
+    height: 20%;
+    display: block;position: center;
+
+}
+#center>#denglu {
+    height: 65%;
+}
+#center>#zhuce {
+    height: 83%;
+}
+#center_down {
+    height: 15%;
+}
+#center {
+    width: 65vw;
+    border: 1ex #ffaa33 solid;
+    margin: 1ex;
+    float: left;
+}
+/*regist用*/
+#center>#center_up_regist {
+    height: 10%;
+    display: block;
+    position: center;
+
+}
+#center_down_regist {
+    height: 15%;
+}
 #center {
     width: 65vw;
     border: 1ex #ffaa33 solid;
@@ -180,6 +226,6 @@ div.clear{clear:both}
 /*底部样式*/
 #footer {
     width: 100%;
-    height: 10%;
+    height: auto;/*10%*/
     background-color: #747267;
 }

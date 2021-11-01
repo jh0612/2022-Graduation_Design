@@ -36,8 +36,6 @@ class PetsDAOImplTest {
             conn = JDBCUtils.getConnectionDruid();
             Pets pets = pd.getPetsById(conn, 1);
             System.out.println(pets);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -50,8 +48,6 @@ class PetsDAOImplTest {
             conn = JDBCUtils.getConnectionDruid();
             List<Pets> petsList = pd.getAllBySpecies(conn, "cat");
             petsList.forEach(System.out::println);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -65,7 +61,7 @@ class PetsDAOImplTest {
             FileInputStream fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
             conn = JDBCUtils.getConnectionDruid();
             pd.insert(conn,new Pets(null,"ワンちゃん","dog",5,"かわいい",fis));
-        } catch (SQLException | FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
@@ -78,8 +74,6 @@ class PetsDAOImplTest {
         try {
             conn = JDBCUtils.getConnectionDruid();
             pd.deleteById(conn, 2);
-        } catch (SQLException e) {
-            e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
         }
@@ -93,7 +87,7 @@ class PetsDAOImplTest {
             FileInputStream fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
 
             pd.updateById(conn, new Pets(null,"ワンちゃん","dog",5,"かわいい",fis));
-        } catch (SQLException | FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
             JDBCUtils.close(conn,null,null);
@@ -102,11 +96,7 @@ class PetsDAOImplTest {
 
     @Test
     void petpicDownl(){
-        try {
-            Connection conn = JDBCUtils.getConnectionDruid();
-            pd.petpicDownl(conn,2);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Connection conn = JDBCUtils.getConnectionDruid();
+        pd.petpicDownl(conn,2);
     }
 }
