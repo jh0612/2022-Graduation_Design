@@ -6,6 +6,7 @@ import java.io.*;
 import java.sql.*;
 
 /**
+ * 本次毕设不与使用，使用String的url
  * @author jhao Email:jh0612@icloud.com
  * @version v1.0
  * @create 2021-10-26  11:54
@@ -38,7 +39,8 @@ public abstract class JDBCBlob {
                 String species = rs.getString("species");
                 int amount = rs.getInt("amount");
                 String instruction = rs.getString("instruction");
-                Pets pet = new Pets(id,petsname,species,amount,instruction);
+                String picture1 = rs.getString("picture");
+                Pets pet = new Pets(id,petsname,species,amount,instruction,picture1);
                 System.out.println(pet);
 
                 Blob picture = rs.getBlob("picture");

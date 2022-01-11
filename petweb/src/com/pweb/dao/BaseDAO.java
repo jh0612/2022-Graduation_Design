@@ -3,6 +3,7 @@ package com.pweb.dao;
 import com.pweb.utils.JDBCUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -82,14 +83,14 @@ public abstract class BaseDAO<T> {
     }
     /**
      * 查询特殊值的方法
-     * @param conn 连接
      * @param sql sql
      * @param args 可变型参
      * @return E
      * @author jh
      * @Date:  2021/10/25  20:24
      */
-    public <E> E getValue(Connection conn,String sql,Object...args){
+    public <E> E getValue(String sql,Object...args){
+        Connection conn = JDBCUtils.getConnectionDruid();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -116,14 +117,14 @@ public abstract class BaseDAO<T> {
 
     /**
      * 查多行数据，不能处理事务
-     * @param conn 连接
      * @param sql sql语句
      * @param args 可变形惨
      * @return java.util.List<T>
      * @author jh
-     * @Date:  2021/10/25  19:37
+     * @Date:  2021/11/11  19:37
      */
-    public List<T> getForList(Connection conn, String sql, Object... args) {
+    public List<T> getForList(String sql, Object... args) {
+        Connection conn = JDBCUtils.getConnectionDruid();
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
@@ -311,4 +312,23 @@ public abstract class BaseDAO<T> {
             JDBCUtils.close(conn,ps,null);
         }
     }
+
+//    /**
+//     * 执行返回一行一列的sql语句
+//     * @param sql 执行的sql语句
+//     * @param args sql对应的参数值
+//     * @return Object
+//     * @author jh
+//     * @Date:  2021/11/11  17:42
+//     */
+//
+//    public Object queryForSingleValue(String sql,Object...args){
+//        Connection con = JDBCUtils.getConnectionDruid();
+//        try {
+//            return queryRunner.query(con,sql,new ScalarHandler(),args);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

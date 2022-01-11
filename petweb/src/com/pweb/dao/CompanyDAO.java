@@ -2,7 +2,6 @@ package com.pweb.dao;
 
 import com.pweb.pojo.Company;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -33,57 +32,51 @@ public interface CompanyDAO {
 
     /**
      * 需求3---将Company对象添加进数据库中,注册用
-     * @param conn 连接
      * @param Company 用户对象
      * @author jh
      * @Date:  2021/10/25  20:38
      */
-    void insert(Connection conn, Company Company);
+    void insert(Company Company);
 
     /**
      * 指定id删除数据
-     * @param conn 连接
      * @param compid id
      * @author jh
      * @Date:  2021/10/25  20:46
      */
-    void deleteById(Connection conn,Integer compid);
+    void deleteById(Integer compid);
 
     /**
      * 指定id修改数据
-     * @param conn 连接
      * @param Company 用户对象
      * @author jh
      * @Date:  2021/10/25  20:47
      */
-    void updateById(Connection conn ,Company Company);
+    void updateById(Company Company);
 
     /**
      * 使用compid查到指定对象(一条数据)
-     * @param conn 连接
      * @param compid id
      * @return Company
      * @author jh
      * @Date:  2021/10/25  20:48
      */
-    Company getCompanyById(Connection conn,Integer compid);
+    Company getCompanyById(Integer compid);
 
     /**
      * 查询所有数据构成的集合(多条数据)
-     * @param conn 连接
      * @param compid id
      * @return list<Company>
      * @author jh
      * @Date:  2021/10/25  20:42
      */
-    List<Company> getAll(Connection conn, Integer compid);
+    List<Company> getAll(Integer compid);
 
     /**
      * 返回数据表中的数据的条数
-     * @param conn 连接
      * @return list<Company>
      * @author jh
      * @Date:  2021/10/25  20:42
      */
-    Long getCount(Connection conn);
+    Long getCount();
 }

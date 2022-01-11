@@ -4,7 +4,6 @@ import com.pweb.dao.BaseDAO;
 import com.pweb.dao.CompanyDAO;
 import com.pweb.pojo.Company;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -27,41 +26,39 @@ public class CompanyDAOImpl extends BaseDAO<Company> implements CompanyDAO {
     }
 
     @Override
-    public void insert(Connection conn, Company Company) {
+    public void insert(Company Company) {
         String sql = "insert into company(compusername,compname,comppassword,compemail,compaddress,legalname)values(?,?,?,?,?,?)";
         update(sql,Company.getCompusername(),Company.getCompname(),Company.getComppassword(),Company.getCompemail(),Company.getCompaddress(), Company.getLegalname());
     }
 
     @Override
-    public void deleteById(Connection conn, Integer compid) {
+    public void deleteById(Integer compid) {
         String sql = "delete from company where compid = ?";
         update(sql,compid);
     }
 
     @Override
-    public void updateById(Connection conn, Company Company) {
+    public void updateById( Company Company) {
         String sql = "update company set compusername = ?,compname = ?,comppassword = ?,compemail = ?,compaddress = ?,legalname = ? where compid = ?";
         update(sql,Company.getCompusername(),Company.getCompname(),Company.getComppassword(),Company.getCompemail(),Company.getCompaddress(), Company.getLegalname(),Company.getCompid());
     }
 
     @Override
-    public Company getCompanyById(Connection conn, Integer compid) {
+    public Company getCompanyById(Integer compid) {
         String sql = "select compid,compusername,comppassword,compname,compemail,compaddress,legalname from company where compid = ?";
-//        Company Company = getInstance(conn, sql,compid);
         return getInstance(sql,compid);
     }
 
 
     @Override
-    public List<Company> getAll(Connection conn, Integer compid) {
+    public List<Company> getAll(Integer compid) {
         String sql = "select compid,compusername,comppassword,compname,compemail,compaddress,legalname from company";
-//        List<Company> list = getForList(conn, sql);
-        return getForList(conn, sql);
+        return getForList(sql);
     }
 
     @Override
-    public Long getCount(Connection conn) {
+    public Long getCount() {
         String sql = "select count(*) from company";
-        return getValue(conn,sql);
+        return getValue(sql);
     }
 }

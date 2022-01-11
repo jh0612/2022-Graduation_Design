@@ -5,7 +5,6 @@ import com.pweb.dao.PetsDAO;
 import com.pweb.pojo.Pets;
 import com.pweb.utils.JDBCBlob;
 
-import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -16,37 +15,56 @@ import java.util.List;
  */
 public class PetsDAOImpl extends BaseDAO<Pets> implements PetsDAO {
     @Override
-    public Pets getPetsById(Connection conn, Integer id) {
-        String sql = "select id,petsname,species,amount,instruction from pets where id = ?";
-        return queryForOne(Pets.class,sql,id);
+    public Integer queryDogOrCatForPageTotalCount(String species) {
+        String sql = "select count(*) from pets where species=?";
+//        Number number = (Number) queryForSingleValue(sql,species);
+        Number number = getValue(sql,species);
+        //Number类型转为int类型
+        return number.intValue();
+    }
+
+
+    @Override
+    public List<Pets> queryForPageItems(String species,int begin, int pageSize) {
+        String sql = "select id,petsname,species,amount,instruction,picture from pets WHERE species = ? limit ?,?";
+        List<Pets> forList = getForList(sql, species, begin, pageSize);
+        return forList;
     }
 
     @Override
-    public List<Pets> getAllBySpecies(Connection conn, String species) {
-        String sql = "select id,petsname,species,amount,instruction from pets where species = ?";
-        return getForList(conn,sql,species);
+    public Pets getPetsById(Integer id) {
+        String sql = "select id,petsname,species,amount,instruction,picture from pets where id = ?";
+        Pets pets = queryForOne(Pets.class, sql, id);
+        return pets;
     }
 
     @Override
-    public void insert(Connection conn, Pets pets) {
+    public List<Pets> getAllBySpecies(String species) {
+        String sql = "select id,petsname,species,amount,instruction,picture from pets where species = ?";
+        List<Pets> forList = getForList(sql, species);
+        return forList;
+    }
+
+    @Override
+    public void insert(Pets pets) {
             String sql = "insert into pets(petsname,species,amount,instruction,picture)values(?,?,?,?,?)";
-            update(sql,pets.getpetsname(),pets.getSpecies(),pets.getAmount(),pets.getInstruction(),pets.getFis());
+            update(sql,pets.getPetsname(),pets.getSpecies(),pets.getAmount(),pets.getInstruction(),pets.getPicture());
     }
 
     @Override
-    public void deleteById(Connection conn, Integer id) {
+    public void deleteById(Integer id) {
         String sql = "delete from pets where id = ?";
         update(sql,id);
     }
 
     @Override
-    public void updateById(Connection conn, Pets pets) {
+    public void updateById(Pets pets) {
         String sql = "update pets set petsname = ?,species = ?,amount = ?,instruction = ?,picture = ? where id = ?";
-        update(sql,pets.getpetsname(),pets.getSpecies(),pets.getAmount(),pets.getInstruction(),pets.getFis(),pets.getId());
+        update(sql,pets.getPetsname(),pets.getSpecies(),pets.getAmount(),pets.getInstruction(),pets.getPicture(),pets.getId());
     }
 
     @Override
-    public void petpicDownl(Connection conn, Integer id) {
+    public void petpicDownl(Integer id) {
         String sql = "select id,petsname,species,amount,instruction,picture from pets where id = ?";
         JDBCBlob.imgblobdonload(sql,id);
     }

@@ -24,4 +24,14 @@ public class WebUtils {
         }
         return bean;
     }
+
+    public static int parseInt(String strInt,int defaultValue){
+        try {
+            int i = Integer.parseInt(strInt);
+            return i;
+        } catch (NumberFormatException e) {
+//            e.printStackTrace();
+        }
+        return defaultValue;
+    }
 }

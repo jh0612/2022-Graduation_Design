@@ -3,10 +3,8 @@ package com.pweb.test;
 import com.pweb.dao.CustomerDAO;
 import com.pweb.dao.Impl.CustomerDAOImpl;
 import com.pweb.pojo.Customer;
-import com.pweb.utils.JDBCUtils;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -19,16 +17,18 @@ import java.util.List;
  */
 class CustomerDAOTest {
     CustomerDAO cd = new CustomerDAOImpl();
+
     @Test
     void queryUserByUsernameAndPassword() {
-        if (cd.queryUserByUsernameAndPassword("admin","admin") == null){
+        if (cd.queryUserByUsernameAndPassword("admin", "admin") == null) {
             System.out.println("用户名或密码错误，登录失败");
         } else {
             System.out.println("登录成功/查询成功");
         }
     }
+
     @Test
-    void queryCustomerByCustname(){
+    void queryCustomerByCustname() {
         if (cd.queryUserByUsername("admin") != null) {
             System.out.println("用户名已存在");
         } else {
@@ -38,84 +38,42 @@ class CustomerDAOTest {
 
     @Test
     void insert() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            cd.insert(new Customer(null,"simokawa","123456"
-                    ,"1","simokawa@gmail.com","東京都中央区1-1-1",new Date()));//"1996-09-23"
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        cd.insert(new Customer(null, "simokawa", "123456"
+                , "1", "simokawa@gmail.com", "東京都中央区1-1-1", new Date()));//"1996-09-23"
     }
 
     @Test
     void deleteById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            cd.deleteById(conn, 2);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        cd.deleteById(2);
     }
 
     @Test
     void updateById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            cd.updateById(conn, new Customer(2,"simokawa","123456","1"
-                    ,"simokawa@gmail.com","東京都中央区1-2-1",new Date()));//"1996-09-23"
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        cd.updateById(new Customer(2, "simokawa", "123456", "1"
+                , "simokawa@gmail.com", "東京都中央区1-2-1", new Date()));//"1996-09-23"
     }
 
     @Test
     void getCustomerById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            Customer customer = cd.getCustomerById(conn, 2);
-            System.out.println(customer);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        Customer customer = cd.getCustomerById(2);
+        System.out.println(customer);
     }
 
     @Test
     void getAll() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            List<Customer> customerList = cd.getAll(conn, 3);
-            customerList.forEach(System.out::println);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        List<Customer> customerList = cd.getAll();
+        customerList.forEach(System.out::println);
     }
 
     @Test
     void getCount() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            Long count = cd.getCount(conn);
-            System.out.println(count);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        Long count = cd.getCount();
+        System.out.println(count);
     }
 
     @Test
     void getMixBirth() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            Date mixBirth = cd.getMixBirth(conn);
-            System.out.println("最小的生日为" + mixBirth);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        Date mixBirth = cd.getMixBirth();
+        System.out.println("最小的生日为" + mixBirth);
     }
 }

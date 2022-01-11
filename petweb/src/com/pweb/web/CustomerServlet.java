@@ -15,6 +15,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.google.code.kaptcha.Constants.KAPTCHA_SESSION_KEY;
+
 /**
  * Customer功能
  * 目前(登录与注册)
@@ -27,6 +29,14 @@ import java.util.Date;
 @WebServlet("/CustomerServlet")//解决乱码[1]
 public class CustomerServlet extends BaseServlet {
     private final CustomService customService = new CustomServiceImpl();
+
+
+
+
+
+
+
+
     /**
     * 登录
     * @param req 1
@@ -46,10 +56,13 @@ public class CustomerServlet extends BaseServlet {
             req.setAttribute("custname",custname);
             req.getRequestDispatcher("/pages/custom/login.jsp").forward(req,resp);
         } else {
+            //保存用户信息到Session会话中
+            req.getSession().setAttribute("cust",loginCustom);
             //跳转到成功界面
             req.getRequestDispatcher("/pages/custom/login_success.jsp").forward(req,resp);
         }
     }
+
     /**
      * 注册
      * @param req 1
@@ -58,6 +71,9 @@ public class CustomerServlet extends BaseServlet {
      * @Date:  2021/11/01  1:23
      */
     protected void regist(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String token = (String)req.getSession().getAttribute(KAPTCHA_SESSION_KEY);
+        req.getSession().removeAttribute(KAPTCHA_SESSION_KEY);
+
         //获取方式一,不可少(前提表单中不只有String类型的时候如下有Date类型)
         ConvertUtils.register((type, value) -> {
                if(value==null){
@@ -75,9 +91,11 @@ public class CustomerServlet extends BaseServlet {
                    throw new RuntimeException(e);
                }
            }, Date.class);
+        String custcode = req.getParameter("code");
+        String custname = req.getParameter("custname");
         //注入
         Customer customer = WebUtils.copyParamToBean(req.getParameterMap(),new Customer());
-        String custcode = req.getParameter("code");
+
         //插入数据库时，存入当前日期，需要格式转换
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         //String格式的数据转化成Date格式
@@ -87,9 +105,11 @@ public class CustomerServlet extends BaseServlet {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+
         //验证码
-        if ("reiwaxr".equals(custcode)){
-            if ( customService.existsCustname(customer.getcustname()) ){
+        if (token != null && token.equalsIgnoreCase(custcode)){
+            if ( customService.existsCustname(custname) ){
                 //回显信息
                 Date getcustbirth = customer.getcustbirth();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

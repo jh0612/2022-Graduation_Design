@@ -2,24 +2,9 @@ package com.pweb.test;
 
 import com.pweb.dao.Impl.PetsDAOImpl;
 import com.pweb.dao.PetsDAO;
-import com.pweb.pojo.Company;
-import com.pweb.pojo.Customer;
 import com.pweb.pojo.Pets;
-import com.pweb.utils.JDBCUtils;
 import org.junit.jupiter.api.Test;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author jhao Email:jh0612@icloud.com
@@ -29,74 +14,50 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class PetsDAOImplTest {
     PetsDAO pd = new PetsDAOImpl();
+
+    @Test
+    void queryDogOrCatForPageTotalCount(){
+        Integer cat = pd.queryDogOrCatForPageTotalCount("cat");
+        System.out.println("当前共有猫-------->" + cat);
+        Integer dog = pd.queryDogOrCatForPageTotalCount("dog");
+        System.out.println("当前共有狗-------->" + dog);
+    }
+
     @Test
     void getPetsById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            Pets pets = pd.getPetsById(conn, 1);
-            System.out.println(pets);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        Pets pets = pd.getPetsById(1);
+        System.out.println(pets);
     }
 
     @Test
     void getAllBySpecies() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            List<Pets> petsList = pd.getAllBySpecies(conn, "cat");
-            petsList.forEach(System.out::println);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        List<Pets> petsList = pd.getAllBySpecies("cat");
+        petsList.forEach(System.out::println);
     }
 
     @Test
     void insert() {
-        Connection conn = null;
-        try {
+//        try {
             //图片这样应该只能放一张需要给文件地址，配置文件使用？？
-            FileInputStream fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
-            conn = JDBCUtils.getConnectionDruid();
-            pd.insert(conn,new Pets(null,"ワンちゃん","dog",5,"かわいい",fis));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+//            FileInputStream fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
+            pd.insert(new Pets(null, "ワンちゃん1", "dog", 5, "かわいい", "http://cdn.reiwaxr.club/typora/20211102131542.jpg"));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Test
     void deleteById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            pd.deleteById(conn, 2);
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+        pd.deleteById(2);
     }
 
     @Test
     void updateById() {
-        Connection conn = null;
-        try {
-            conn = JDBCUtils.getConnectionDruid();
-            FileInputStream fis = new FileInputStream("/Users/jh/ideaworkspace/jdbc/src/1.jpeg");
-
-            pd.updateById(conn, new Pets(null,"ワンちゃん","dog",5,"かわいい",fis));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            JDBCUtils.close(conn,null,null);
-        }
+            pd.updateById(new Pets(null, "ワンちゃん", "dog", 5, "かわいい", null));
     }
 
     @Test
-    void petpicDownl(){
-        Connection conn = JDBCUtils.getConnectionDruid();
-        pd.petpicDownl(conn,2);
+    void petpicDownl() {
+        pd.petpicDownl(2);
     }
 }

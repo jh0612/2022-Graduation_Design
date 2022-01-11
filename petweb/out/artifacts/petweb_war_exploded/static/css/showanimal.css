@@ -1,0 +1,14 @@
+@charset "utf-8";
+#center > div.show_animal {
+    padding: 15px;
+    display: block;
+    /*align-content: center;*/
+}
+
+.imgforanimal {
+    width: 20vw;
+    border-radius: 30px;
+}
+a{
+    text-decoration:none;
+}

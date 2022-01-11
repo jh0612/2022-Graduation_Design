@@ -4,7 +4,6 @@ import com.pweb.dao.BaseDAO;
 import com.pweb.dao.CustomerDAO;
 import com.pweb.pojo.Customer;
 
-import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -35,41 +34,41 @@ public class CustomerDAOImpl extends BaseDAO<Customer> implements CustomerDAO {
     }
 
     @Override
-    public void deleteById(Connection conn, Integer custid) {
+    public void deleteById( Integer custid) {
         String sql = "delete from customer where id = ?";
         update(sql,custid);
     }
 
     @Override
-    public void updateById(Connection conn, Customer customer) {
+    public void updateById(Customer customer) {
         String sql = "update customer set custname = ?,custpassword = ?,custsex = ?,custemail = ?,custaddress = ?,custbirth = ? where custid = ?";
         update(sql,customer.getcustname(),customer.getcustpassword(),customer.getcustsex(),
                 customer.getcustemail(),customer.getcustaddress(),customer.getcustbirth(),customer.getcustid());
     }
 
     @Override
-    public Customer getCustomerById(Connection conn, Integer custid) {
+    public Customer getCustomerById(Integer custid) {
         String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer where custid = ?";
 //        Customer customer = getInstance(conn, sql,custid);
         return getInstance(sql,custid);
     }
 
     @Override
-    public List<Customer> getAll(Connection conn, Integer custid) {
+    public List<Customer> getAll() {
         String sql = "select custid,custname,custpassword,custsex,custemail,custaddress,custbirth from customer";
 //        List<Customer> list = getForList(conn, sql);
-        return getForList(conn, sql);
+        return getForList(sql);
     }
 
     @Override
-    public Long getCount(Connection conn) {
+    public Long getCount() {
         String sql = "select count(*) from customer";
-        return getValue(conn, sql);
+        return getValue( sql);
     }
 
     @Override
-    public Date getMixBirth(Connection conn) {
+    public Date getMixBirth() {
         String sql = "select max(custbirth) from customer";
-        return getValue(conn, sql);
+        return getValue(sql);
     }
 }
