@@ -136,7 +136,7 @@ div.clear{clear:both}
 /*中间部分样式*/
 #main {
     width: 100%;
-    border: 1ex #F00 solid;
+    /*border: 1ex #F00 solid;*/
     position: static;/*这里如果使用下方的relative的话顶部固定的导航栏是不能点击的，要使用static才可以点击，目前对页面无其他不良影响*/
     /*position: relative;*/
     display: flex;
@@ -184,7 +184,7 @@ div.clear{clear:both}
 /*中间细分(下)*/
 #left,#right{
     width: 17%;
-    border: 1ex #ffaa33 solid;
+    /*border: 1ex #ffaa33 solid;*/
     margin: 1ex;
     float: left;
     /*position: fixed; 用于固定导航栏*/
@@ -206,7 +206,7 @@ div.clear{clear:both}
 }
 #center {
     width: 65vw;
-    border: 1ex #ffaa33 solid;
+    /*border: 1ex #ffaa33 solid;*/
     margin: 1ex;
     float: left;
 }
@@ -222,7 +222,7 @@ div.clear{clear:both}
 }
 #center {
     width: 65vw;
-    border: 1ex #ffaa33 solid;
+    /*border: 1ex #ffaa33 solid;*/
     margin: 1ex;
     float: left;
 }

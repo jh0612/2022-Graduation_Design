@@ -43,11 +43,15 @@
     </div>
 <%-- 主体下 --%>
     <div id="main">
-      <div id="left">1</div>
-      <div id="center">
-          2222
+      <div id="left">
+        <br/>
       </div>
-      <div id="right">3333</div>
+      <div id="center">
+          <br/>
+      </div>
+      <div id="right">
+          <br/>
+      </div>
     </div>
 <%-- copyright --%>
     <%@include file="/pages/common/copyright.jsp"%>
